@@ -21,4 +21,4 @@
 ### Upload directory
 /public/uploads/
 ### PhpStorm config
-./idea/
+.idea/
