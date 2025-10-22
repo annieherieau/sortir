@@ -20,22 +20,19 @@ class Sortie
     private ?string $name = null;
 
     #[ORM\Column]
-    private ?\DateTime $startingDate = null;
-
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
-    private ?\DateTime $duration = null;
+    private ?\DateTimeImmutable $startingDate = null;
 
     #[ORM\Column]
-    private ?\DateTime $registerLimitDate = null;
+    private ?\DateTimeImmutable $endingDate = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $registerLimitDate = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $maxRegistrationNumber = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
-
-    #[ORM\Column(length: 50)]
-    private ?string $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
@@ -81,36 +78,36 @@ class Sortie
         return $this;
     }
 
-    public function getStartingDate(): ?\DateTime
+    public function getStartingDate(): ?\DateTimeImmutable
     {
         return $this->startingDate;
     }
 
-    public function setStartingDate(\DateTime $startingDate): static
+    public function setStartingDate(\DateTimeImmutable $startingDate): static
     {
         $this->startingDate = $startingDate;
 
         return $this;
     }
 
-    public function getDuration(): ?\DateTime
+    public function getEndingDate(): ?\DateTimeImmutable
     {
-        return $this->duration;
+        return $this->endingDate;
     }
 
-    public function setDuration(\DateTime $duration): static
+    public function setEndingDate(\DateTimeImmutable $endingDate): static
     {
-        $this->duration = $duration;
+        $this->endingDate = $endingDate;
 
         return $this;
     }
 
-    public function getRegisterLimitDate(): ?\DateTime
+    public function getRegisterLimitDate(): ?\DateTimeImmutable
     {
         return $this->registerLimitDate;
     }
 
-    public function setRegisterLimitDate(\DateTime $registerLimitDate): static
+    public function setRegisterLimitDate(\DateTimeImmutable $registerLimitDate): static
     {
         $this->registerLimitDate = $registerLimitDate;
 
@@ -137,18 +134,6 @@ class Sortie
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): static
-    {
-        $this->status = $status;
 
         return $this;
     }
