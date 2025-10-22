@@ -67,6 +67,8 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->ownedEvents = new ArrayCollection();
         $this->sorties = new ArrayCollection();
+        $this->roles = ['ROLE_USER'];
+        $this->active = true;
     }
 
     public function getId(): ?int
@@ -101,11 +103,8 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
 
-        return array_unique($roles);
+        return $this->roles;
     }
 
     /**
@@ -115,6 +114,12 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->roles = $roles;
 
+        return $this;
+    }
+
+    public function addRole(string $role): static
+    {
+        $this->roles[] = $role;
         return $this;
     }
 
