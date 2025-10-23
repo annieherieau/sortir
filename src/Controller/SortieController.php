@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/', name: 'sortie', methods: ['GET'])]
+#[Route('/', name: 'sortie_', methods: ['GET'])]
 final class SortieController extends AbstractController
 {
     public function __construct(CampusRepository $campusRepository)
@@ -17,7 +17,7 @@ final class SortieController extends AbstractController
         $this->campusList = $campusRepository->findAll();
     }
 
-    #[Route('', name: 'sortie')]
+    #[Route('', name: 'index')]
     public function index(SortieRepository $sortieRepository): Response
     {
 
