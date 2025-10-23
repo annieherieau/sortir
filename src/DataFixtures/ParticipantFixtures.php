@@ -24,6 +24,7 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
             $participant = new Participant();
             $participant->setName($faker->lastName());
             $participant->setFirstName($faker->firstName());
+            $participant->setPseudo($faker->unique()->userName());
             $participant->setEmail($faker->unique()->safeEmail());
             if($i === 0) {
                 $participant->addRole('ROLE_ADMIN');
