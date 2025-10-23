@@ -8,7 +8,7 @@
         <label>
             <select>
                 {% for c in campusList %}
-                    {% set selected = c.sorties.count() > 0 ? 'selected' : '' %}
+                    {% set selected = c == campus ? 'selected' : '' %}
                     <option value="{{ c.id }}" {{ selected }}>{{ c.name }}</option>
                 {% endfor %}
             </select>
@@ -52,12 +52,14 @@
             {#        ******* ACTIONS  ******* #}
             {#               TODO ajouter le liens #}
             <td>
+                <a href="/" title="Afficher les détails de la sortie">Afficher</a>
+
                 {#                SE DESISTER #}
-                {% if isRegistred  and s.state.nb < 3 %}
+                {% if isRegistred  and (s.state.nb == 1 or s.state.nb == 2) %}
                     <a href="/" title="Se désister">Se désister</a>
                 {% endif %}
                 {#                S'INSCRIRE' #}
-                {% if not isRegistred  and s.state.nb == 1 %}
+                {% if not isRegistred  and s.state.nb == 1  and s.participants.count < s.maxRegistrationNumber %}
                     <a href="/" title="S'inscrire">S'inscrire</a>
                 {% endif %}
 
@@ -66,13 +68,7 @@
                     <a href="/" title="Annuler la sortie">Annuler</a>
                 {% endif %}
 
-                <a href="/" title="Afficher les détails de la sortie">Afficher</a>
 
-                {% if isTheOwner %}
-                    {#                TODO ajouter le lien Annuler la sortie #}
-                    <a href="/" title="Annuler la sortie">Annuler</a>
-                {% else %}
-                {% endif %}
 
             </td>
             </tr>

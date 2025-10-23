@@ -20,27 +20,11 @@ final class SortieController extends AbstractController
     #[Route('', name: 'index')]
     public function index(SortieRepository $sortieRepository): Response
     {
-
-        /* TODO ajouter losrque dev login OK
         $user = $this->getUser();
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
         $campus = $user->getCampus();
-        */
-
-        /* TODO enlever losrque dev login OK */
-        $campusList = $this->campusList;
-        $campusDefault = $campusList[0];
-        foreach ($campusList as $c) {
-            if ($c->getSorties()->count() >0)
-            {
-                $campusDefault = $c;
-            }
-        }
-        $user = $this->getUser() ?? new Participant();
-        $campus = $user->getCampus() ?? $campusDefault;
-        /**/
 
         $sorties = $sortieRepository->findByCampus($campus);
         dump($sorties);
