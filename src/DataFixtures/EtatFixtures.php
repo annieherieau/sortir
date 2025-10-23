@@ -12,8 +12,9 @@ class EtatFixtures extends Fixture
     {
         $etats = ["En Création", "Ouverte", "Clôturée", "En cours",
             "Terminée", "Annulée", "Historisée"];
-        foreach ($etats as $etat) {
+        foreach ($etats as $i => $etat) {
             $e = new Etat();
+            $e->setNb($i);
             $e->setLibelle($etat);
             $manager->persist($e);
         }

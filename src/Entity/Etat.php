@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\EtatRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EtatRepository::class)]
@@ -23,6 +24,9 @@ class Etat
      */
     #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'state')]
     private Collection $sorties;
+
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $nb = null;
 
     public function __construct()
     {
@@ -72,6 +76,18 @@ class Etat
                 $sortie->setState(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNb(): ?int
+    {
+        return $this->nb;
+    }
+
+    public function setNb(int $nb): static
+    {
+        $this->nb = $nb;
 
         return $this;
     }
