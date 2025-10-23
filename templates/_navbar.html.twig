@@ -1,8 +1,21 @@
 <!-- placeholder -->
 <ul>
     <li>Accueil</li>
-    <li>Login</li>
-    <li>Logout</li>
-    <li>Mon compte</li>
+    {% if app.user %}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('app_logout') }}"
+               title="Logout">
+                Logout
+            </a>
+        </li>
+        <li>Mon compte</li>
+    {% else %}
+        <li class="nav-item">
+            <a class="nav-link"  href="{{ path('app_login') }}"
+               title="Login">
+                Login
+            </a>
+        </li>
+    {% endif %}
     <li>Administration</li>
 </ul>
