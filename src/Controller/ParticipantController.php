@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Entity\Participant;
 use App\Form\ParticipantType;
+use App\Form\UpdatePasswordType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,38 +26,65 @@ final class ParticipantController extends AbstractController
     #[Route('/myprofile', name: 'myprofile', methods: ['GET', 'POST'])]
     public function myaccount(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
+        $errors = [];
+
+        // Formulaire des infos utilisateur
         $user = $this->getUser() ?? new Participant(); // participant
         $form = $this->createForm(ParticipantType::class, $user);
         $form->handleRequest($request);
 
+        // Formulaire de modification de mot de passe
+        $pwdForm = $this->createForm(UpdatePasswordType::class);
+        $pwdForm->handleRequest($request);
+
+        // Traitement du Formulaire des infos utilisateur
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // TODO hasher le mot de passe
-            /*
-            $newPassword = $form->get('password')->getData();
-            dump($newPassword);
-            if ($newPassword) {
-                // check si le mot de passe actuel est correct
-                $current_password = $request->getPayload()->get('current_password');
-                dump($current_password);
-                if (true){
-                    // si oui coder le nouveau
-                    $hashed_password = $userPasswordHasher->hashPassword($user, $newPassword);
-                    dump($hashed_password);
-                    $user->setPassword($hashed_password);
-                }
+            // vrifier le mot de passe actuel
+            $current_password = $form->get('current_password')->getData();
+            dump($current_password);
+            if($userPasswordHasher->isPasswordValid($user, $current_password))
+            {
+                // mise à jour des infos
+                $entityManager->persist($user);
+                $entityManager->flush();
 
+                $this->addFlash('success', 'Modifications enregistrées');
+            }else{
+                $this->addFlash('danger', "Mot de passe incorrect: les modifications n'ont pas été enregistrées.");
             }
-*/
-            // mise à jour
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Modifications enregistrées');
             return $this->redirectToRoute('participant_myprofile');
         }
+
+        // Traitement du Formulaire de modification de mot de passe
+        if($pwdForm->isSubmitted() && $pwdForm->isValid()){
+
+            // vrifier le mot de passe actuel
+            $currentPassword = $pwdForm->get('current_password')->getData();
+            if ($userPasswordHasher->isPasswordValid($user, $currentPassword)) {
+
+                // hasher le nouveau mot de passe
+                $newPassword = $pwdForm->get('password')->getData();
+                dump($newPassword);
+
+                $hashed_password = $userPasswordHasher->hashPassword($user, $newPassword);
+                dump($hashed_password);
+
+                // mise à jour du mot de passe
+                $user->setPassword($hashed_password);
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Mot de passe modifié');
+            }else{
+                $this->addFlash('danger', "Mot de passe actuel incorrect: le mot de passe n'a pa été modifié");
+            }
+            return $this->redirectToRoute('participant_myprofile');
+        }
+
         return $this->render('participant/myprofile.html.twig', [
             'form' => $form,
+            'pwdForm' => $pwdForm,
         ]);
     }
 
