@@ -12,6 +12,11 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/', name: 'sortie_', methods: ['GET'])]
 final class SortieController extends AbstractController
 {
+    /**
+     * @var \App\Entity\Campus[]|array
+     */
+    private array $campusList;
+
     public function __construct(CampusRepository $campusRepository)
     {
         $this->campusList = $campusRepository->findAll();
