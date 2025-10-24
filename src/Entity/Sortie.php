@@ -209,4 +209,36 @@ class Sortie
 
         return $this;
     }
+
+    /**
+     * Renvoie la durée de la sortie par défault en DateInterval, ou en jours, heures, minutes si précisé
+     * @param string $str
+     * @return mixed
+     */
+    public function getDuration(string $str = 'interval'): mixed
+    {
+        $duration = $this->startingDate->diff($this->endingDate);
+        $array = ['interval'=>$duration, 'd'=>$duration->days, 'h' => $duration->h, 'i' => $duration->i];
+        return $array[$str];
+    }
+
+    /**
+     * Permet de vérifier si un participant est l'organisateur de la sortie
+     * @param Participant|null $participant
+     * @return bool
+     */
+    public function isTheOwner(?Participant $participant): bool
+    {
+        return $this->owner === $participant;
+    }
+
+    /**
+     * Permet de vérifier si un participant est inscrit à la sortie
+     * @param Participant|null $participant
+     * @return bool
+     */
+    public function isRegistred(?Participant $participant): bool
+    {
+        return $this->participants->contains($participant);
+    }
 }

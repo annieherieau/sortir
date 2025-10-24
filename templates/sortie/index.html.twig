@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SortieController!{% endblock %}
+
+{% block main %}
+    {% if app.user %}
+        <div class="card w-25 card-body flex float-end">
+            <div><strong>Date du jour :</strong> {{ 'now' | date('d/m/Y') }}<br>
+                <strong>Participant :</strong> {{ app.user.pseudo }}</div>
+        </div>
+    {% endif %}
+
+    {#        TODO: block filtre #}
+    <div class="w-100 flex float-start">
+        <label>
+            <select>
+                {% for c in campusList %}
+                    {% set selected = c == campus ? 'selected' : '' %}
+                    <option value="{{ c.id }}" {{ selected }}>{{ c.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+    <table class="table table-light table-bordered border-black">
+        <thead class="">
+        <tr class="table-dark">
+            <th>Nom de la sortie</th>
+            <th>Date de la sortie</th>
+            <th>Clôture</th>
+            <th>Inscrits / Places</th>
+            <th>Etat</th>
+            <th>Inscrit(e)</th>
+            <th>Organisateur</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for s in sorties %}
+            {% set isRegistred = s.registred(app.user) %}
+            {% set isTheOwner = s.theOwner(app.user) %}
+            {% set visible = not isTheOwner and s.state.nb == 0 ? false : true %}
+
+            {% if visible %}
+                <tr>
+
+                    <td>{{ s.name }}</td>
+                    <td>{{ s.startingDate | date ('d/m/Y h:i') }}
+                    </td>
+                    <td>{{ s.registerLimitDate | date ('d/m/Y') }}</td>
+                    <td>{{ s.participants.count }}/{{ s.maxRegistrationNumber }}</td>
+                    <td>{{ s.state.libelle }}</td>
+                    <td>{{ isRegistred ? 'X' : '' }}</td>
+                    <td>
+                        {% if isTheOwner %}
+                            {{ s.owner.pseudo }}
+                        {% else %}
+                            {#                    TODO ajouter le lien vers la consultation du profil #}
+                            <a href="/" title="Afficher le profil">{{ s.owner.pseudo }} </a>
+                        {% endif %}
+                    </td>
+                    {#        ******* ACTIONS  ******* #}
+                    {#               TODO ajouter le liens #}
+                    <td>
+                        {#               AFFICHER #}
+                        <a href="#" title="Afficher les détails de la sortie">Afficher</a>
+
+                        {#                SE DESISTER #}
+                        {% if isRegistred  and (s.state.nb == 1 or s.state.nb == 2) %}
+                            <a href="#" title="Se désister">Se désister</a>
+                        {% endif %}
+                        {#                S'INSCRIRE' #}
+                        {% if not isRegistred  and s.state.nb == 1
+                            and s.participants.count < s.maxRegistrationNumber %}
+                            <a href="#" title="S'inscrire">S'inscrire</a>
+                        {% endif %}
+
+                        {#                PUBLIER/SUPPRIMER #}
+                        {% if s.state.nb == 0 %}
+                            <a href="#" title="Modifier">Modifier</a> <a href="#" title="Publier">Publier</a> <a href="#" title="Supprimer">Supprimer</a>
+                        {% endif %}
+
+                        {#                ANNULER #}
+                        {% if (s.state.nb > 0 and s.state.nb < 3) and ( is_granted('ROLE_ADMIN') or isTheOwner ) %}
+                            <a href="#" title="Annuler la sortie">Annuler</a>
+                        {% endif %}
+
+
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-primary btn-lg" href="#" role="button">Créer une sortie</a>
+
+{% endblock %}
