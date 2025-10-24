@@ -1,26 +1,43 @@
-<!-- placeholder -->
-<ul>
-    <li class="nav-item">
-        <a class="nav-link" href="{{ path('sortie_index') }}"
-           title="Accueil">
-            Accueil
-        </a>
-    </li>
-    {% if app.user %}
-        <li class="nav-item">
-            <a class="nav-link" href="{{ path('app_logout') }}"
-               title="Logout">
-                Logout
-            </a>
-        </li>
-        <li>Mon compte</li>
-    {% else %}
-        <li class="nav-item">
-            <a class="nav-link"  href="{{ path('app_login') }}"
-               title="Login">
-                Login
-            </a>
-        </li>
-    {% endif %}
-    <li>Administration</li>
-</ul>
+<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+    <div class="container">
+        <h1><a class="navbar-brand" href="#">Sortir !</a></h1>
+        <div>
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('sortie_index') }}"
+                    title="Accueil">
+                    Accueil</a>
+                </li>
+                {% if app.user %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_logout') }}"
+                           title="Logout">
+                            Logout
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"
+                           title="Mon compte">
+                            Mon compte
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link"  href="{{ path('app_login') }}"
+                           title="Login">
+                            Login
+                        </a>
+                    </li>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"
+                           title="Administration">
+                            Administration
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

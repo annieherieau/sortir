@@ -28,24 +28,18 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
         $etats = $manager->getRepository(Etat::class)->findAll();
 
         // En création / Ouverte
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $sortie = new Sortie();
-            $sortie->setName($faker->words(2, true).' _draft');
+            $sortie->setName($faker->words(2, true));
             $sortie->setDescription($faker->sentence());
             $sortie->setLieu($faker->randomElement($lieux));
 
-            $startingDate = $this->getStartingdate(5, 20);
-            $sortie->setStartingDate($startingDate);
-
-            $endingDate = $this->getEndingDate($startingDate);
-            $sortie->setEndingDate($endingDate);
-
-            $sortie->setRegisterLimitDate($startingDate->modify('-1 days'));
+            $this->setDates($sortie, 5, 20, -1);
 
             $maxRegistered = random_int(2,10);
             $sortie->setMaxRegistrationNumber($maxRegistered);
 
-            $owner = $participants[0];
+            $owner = $faker->randomElement($participants);
             $sortie->setOwner($owner);
 
             $campus = $owner->getCampus();
@@ -65,24 +59,18 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
         }
 
         // Clôturée par max participants
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 4; $i++) {
             $sortie = new Sortie();
-            $sortie->setName("Balade au Louvre");
-            $sortie->setDescription("Journée découverte de l'histoire de France et de ses magnifiques bijoux. Possibilité de repartir avec des bibelots!");
+            $sortie->setName($faker->words(3, true));
+            $sortie->setDescription($faker->sentence());
             $sortie->setLieu($faker->randomElement($lieux));
 
-            $startingDate = $this->getStartingdate(5, 20);
-            $sortie->setStartingDate($startingDate);
-
-            $endingDate = $this->getEndingDate($startingDate);
-            $sortie->setEndingDate($endingDate);
-
-            $sortie->setRegisterLimitDate($startingDate->modify('-1 days'));
+            $this->setDates($sortie, 5, 20, -1);
 
             $maxRegistered = random_int(2, 10);
             $sortie->setMaxRegistrationNumber($maxRegistered);
 
-            $owner = $participants[0];
+            $owner = $faker->randomElement($participants);
             $sortie->setOwner($owner);
 
             $campus = $owner->getCampus();
@@ -95,25 +83,20 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $manager->persist($sortie);
         }
 
+
         // Clôturée par date limite
-        for ($i = 0; $i < 4; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $sortie = new Sortie();
             $sortie->setName($faker->words(4, true));
             $sortie->setDescription($faker->sentence());
             $sortie->setLieu($faker->randomElement($lieux));
 
-            $startingDate = $this->getStartingdate(0, 1);
-            $sortie->setStartingDate($startingDate);
-
-            $endingDate = $this->getEndingDate($startingDate);
-            $sortie->setEndingDate($endingDate);
-
-            $sortie->setRegisterLimitDate($startingDate->modify('-1 days'));
+            $this->setDates($sortie, 0, 1, -1);
 
             $maxRegistered = random_int(2, 10);
             $sortie->setMaxRegistrationNumber($maxRegistered);
 
-            $owner = $participants[0];
+            $owner = $faker->randomElement($participants);
             $sortie->setOwner($owner);
 
             $campus = $owner->getCampus();
@@ -133,18 +116,12 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $sortie->setDescription($faker->sentence());
             $sortie->setLieu($faker->randomElement($lieux));
 
-            $startingDate = $this->getStartingdate(-1, 0);
-            $sortie->setStartingDate($startingDate);
-
-            $endingDate = $this->getEndingDate($startingDate);
-            $sortie->setEndingDate($endingDate);
-
-            $sortie->setRegisterLimitDate($startingDate->modify('-1 days'));
+            $this->setDates($sortie, -1,0, -1);
 
             $maxRegistered = random_int(2,10);
             $sortie->setMaxRegistrationNumber($maxRegistered);
 
-            $owner = $participants[0];
+            $owner = $faker->randomElement($participants);
             $sortie->setOwner($owner);
 
             $campus = $owner->getCampus();
@@ -156,7 +133,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
                 $sortie->addParticipant($faker->randomElement($participants));
             }
 
-            $sortie->setState($etats[$now < $endingDate ? 3 : 4]);
+            $sortie->setState($etats[$now < $sortie->getEndingDate() ? 3 : 4]);
             $manager->persist($sortie);
         }
 
@@ -167,18 +144,12 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $sortie->setDescription($faker->sentence());
             $sortie->setLieu($faker->randomElement($lieux));
 
-            $startingDate = $this->getStartingdate(5, 20);
-            $sortie->setStartingDate($startingDate);
-
-            $endingDate = $this->getEndingDate($startingDate);
-            $sortie->setEndingDate($endingDate);
-
-            $sortie->setRegisterLimitDate($startingDate->modify('-1 days'));
+            $this->setDates($sortie, 5, 20, -1);
 
             $maxRegistered = random_int(2,10);
             $sortie->setMaxRegistrationNumber($maxRegistered);
 
-            $owner = $participants[0];
+            $owner = $faker->randomElement($participants);
             $sortie->setOwner($owner);
 
             $campus = $owner->getCampus();
@@ -203,18 +174,12 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $sortie->setDescription($faker->sentence());
             $sortie->setLieu($faker->randomElement($lieux));
 
-            $startingDate = $this->getStartingdate(-40, -30);
-            $sortie->setStartingDate($startingDate);
-
-            $endingDate = $this->getEndingDate($startingDate);
-            $sortie->setEndingDate($endingDate);
-
-            $sortie->setRegisterLimitDate($startingDate->modify('-1 days'));
+            $this->setDates($sortie, -40, -30, -1);
 
             $maxRegistered = random_int(2,10);
             $sortie->setMaxRegistrationNumber($maxRegistered);
 
-            $owner = $participants[0];
+            $owner = $faker->randomElement($participants);
             $sortie->setOwner($owner);
 
             $campus = $owner->getCampus();
@@ -240,18 +205,36 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
         return [ParticipantFixtures::class, LieuFixtures::class, EtatFixtures::class];
     }
 
-    private function getStartingdate(int $min, int $max): \DateTimeImmutable
+    /**
+     * Permet de calculer les dates par rapport à aujourd'hui
+     * Met à jour le attributs de la sortie
+     * @param Sortie $sortie
+     * @param $min
+     * @param $max
+     * @param $limit
+     * @return void
+     * @throws \Random\RandomException
+     */
+    public function setDates(Sortie &$sortie, $min, $max, $limit): void
     {
-       return \DateTimeImmutable::createFromMutable( $this->faker->dateTimeBetween('+'.$min.' days', '+'.$max.' days'));
-    }
-    private function getEndingDate(\DateTimeImmutable $startingDate): \DateTimeImmutable
-    {
+        // date début
+        $startingDate = $this->faker->dateTimeBetween('+'.$min.' days', '+'.$max.' days');
+        $minutes = [0, 15, 30, 45];
+        $startingDate->setTime(random_int(7, 23), $this->faker->randomElement($minutes));
+        $startingDate = \DateTimeImmutable::createFromMutable($startingDate);
+        $sortie->setStartingDate($startingDate);
+
+        // date de fin
         $minutes = \DateInterval::createFromDateString(random_int(0, 55).' minutes');
         $hours = \DateInterval::createFromDateString(random_int(0, 23).' hours');
         // $days = \DateInterval::createFromDateString(random_int(0, 4).' days');
-        return $startingDate
+        $endingDate = $startingDate
             //->add( $days )
             ->add( $hours )->add( $minutes );
+        $sortie->setEndingDate($endingDate);
+
+        // date limite d'inscription
+        $sortie->setRegisterLimitDate($startingDate->modify('-'.$limit.' days'));
     }
 
 }
