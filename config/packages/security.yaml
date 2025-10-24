@@ -16,13 +16,12 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            user_checker: App\Security\UserChecker
             form_login:
                 login_path: app_login
                 check_path: app_login
-                success_handler: App\Security\CustomSuccessHandler
-                failure_handler: App\Security\CustomFailureHandler
                 enable_csrf: true
+            # Permet de vérifier des informations avant le login. (Compte actif/inactif)
+            user_checker: App\Security\UserChecker
             logout:
                 path: app_logout
                 # where to redirect after logout

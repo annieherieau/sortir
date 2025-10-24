@@ -4,12 +4,9 @@
 
 {% block main %}
     <form method="post">
-        {% if app.session.get('loginError') %}
-            <div class=" alert-danger">
-                {{ app.session.get('loginError') }}
-            </div>
+        {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
         {% endif %}
-
 
         {% if app.user %}
             <div class="mb-3">
