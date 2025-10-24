@@ -23,10 +23,10 @@ final class ParticipantController extends AbstractController
             'controller_name' => 'ParticipantController',
         ]);
     }
+
     #[Route('/myprofile', name: 'myprofile', methods: ['GET', 'POST'])]
     public function myaccount(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
-        $errors = [];
 
         // Formulaire des infos utilisateur
         $user = $this->getUser() ?? new Participant(); // participant
@@ -42,22 +42,24 @@ final class ParticipantController extends AbstractController
 
             // vrifier le mot de passe actuel
             $current_password = $form->get('current_password')->getData();
-            dump($current_password);
-            if($userPasswordHasher->isPasswordValid($user, $current_password))
-            {
-                // mise à jour des infos
-                $entityManager->persist($user);
-                $entityManager->flush();
+            if ($userPasswordHasher->isPasswordValid($user, $current_password)) {
+                try {
+                    // mise à jour des infos
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+                    $this->addFlash('success', 'Modifications enregistrées');
+                } catch (\Exception $exception) {
+                    $this->addFlash('danger', "Une erreur s'est produite :" . $exception->getMessage());
+                }
 
-                $this->addFlash('success', 'Modifications enregistrées');
-            }else{
+            } else {
                 $this->addFlash('danger', "Mot de passe incorrect: les modifications n'ont pas été enregistrées.");
             }
             return $this->redirectToRoute('participant_myprofile');
         }
 
         // Traitement du Formulaire de modification de mot de passe
-        if($pwdForm->isSubmitted() && $pwdForm->isValid()){
+        if ($pwdForm->isSubmitted() && $pwdForm->isValid()) {
 
             // vrifier le mot de passe actuel
             $currentPassword = $pwdForm->get('current_password')->getData();
@@ -65,18 +67,20 @@ final class ParticipantController extends AbstractController
 
                 // hasher le nouveau mot de passe
                 $newPassword = $pwdForm->get('password')->getData();
-                dump($newPassword);
-
                 $hashed_password = $userPasswordHasher->hashPassword($user, $newPassword);
-                dump($hashed_password);
 
-                // mise à jour du mot de passe
-                $user->setPassword($hashed_password);
-                $entityManager->persist($user);
-                $entityManager->flush();
+                try {
+                    // mise à jour du mot de passe
+                    $user->setPassword($hashed_password);
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+                    $this->addFlash('success', 'Mot de passe modifié');
+                } catch (\Exception $exception) {
+                    $this->addFlash('danger', "Une erreur s'est produite :" . $exception->getMessage());
+                }
 
-                $this->addFlash('success', 'Mot de passe modifié');
-            }else{
+
+            } else {
                 $this->addFlash('danger', "Mot de passe actuel incorrect: le mot de passe n'a pa été modifié");
             }
             return $this->redirectToRoute('participant_myprofile');
@@ -87,5 +91,4 @@ final class ParticipantController extends AbstractController
             'pwdForm' => $pwdForm,
         ]);
     }
-
 }
