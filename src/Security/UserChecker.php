@@ -22,7 +22,7 @@ class UserChecker implements UserCheckerInterface
 
         if (!$user->isActive()) {
             throw new CustomUserMessageAccountStatusException(
-                'Your account is not activated, please contact the administrator.');
+                'Aucun compte actif. Veuillez contacter l\'administration du site.');
         }
     }
 
