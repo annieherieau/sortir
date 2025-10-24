@@ -3,7 +3,118 @@
 {% block title %}Mon Compte{% endblock %}
 
 {% block main %}
+    {% set u = app.user %}
     <h2>Mon Profil</h2>
 
+    <div class="flex-wrap justify-content-start">
+        <div class="float-start m-3" style="width: 15%">
+                <img class="img-thumbnail" src="{{ asset('img/user-placeholder.jpg') }}" size="50" alt="Photo de profil">
+        </div>
+        <div class="">
+                <form class="">
+                    <fieldset>
+                        {#            <legend>Informations personnelles</legend> #}
+
+                        <div class="d-flex m-2">
+                            <label for="campus" class="w-25 col-form-label">Campus</label>
+                            <div class="w-100">
+                                <select class="form-select bg-light" name="campus" id="campus">
+                                    <option value="" disabled selected>{{ app.user.campus.name }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-flex m-2">
+                            <label for="pseudo" class="w-25 col-form-label">Pseudo</label>
+                            <div class="w-100">
+                                <input type="text" class="form-control" id="pseudo" name="pseudo"
+                                       value="{{ u.pseudo }}">
+                                <small id="pseudoHelp" class="alert-dismissible alert-danger">
+                                    Ce speudo est déjà utilisé par un autre participant.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex m-2">
+                            <label for="prenom" class="w-25 col-form-label">Prénom</label>
+                            <div class="w-100">
+                                <input type="text" class="form-control" id="prenom" name="prenom"
+                                       value="{{ u.firstname }}">
+                            </div>
+                        </div>
+
+                        <div class="d-flex m-2">
+                            <label for="nom" class="w-25 col-form-label">Nom</label>
+                            <div class="w-100">
+                                <input type="text" class="form-control" id="nom" name="nom" value="{{ u.name }}">
+                            </div>
+                        </div>
+
+                        <div class="d-flex m-2">
+                            <label for="phone_number" class="w-25 col-form-label">Téléphone</label>
+                            <div class="w-100">
+                                <input type="text" class="form-control" id="phone_number" name="phone_number"
+                                       value="{{ u.phoneNumber }}">
+                            </div>
+                        </div>
+
+                        <div class="d-flex m-2">
+                            <label for="email" class="w-25 col-form-label">Email</label>
+                            <div class="w-100">
+                                <input type="email" class="form-control" id="email" name="email"
+                                       value="{{ u.email }}">
+                                <small id="emailHelp" class="alert-dismissible alert-danger">
+                                    Cet email est déjà utilisé par un autre participant..</small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex m-2">
+                            <label for="new_password" class="w-25 col-form-label">Nouveau Mot de passe</label>
+                            <div class="w-100">
+                                <input type="password" class="form-control" id="new_password" name="new_password"
+                                       value="">
+                                <small id="new_passwordHelp" class="alert-dismissible alert-danger">
+                                    ici message pour Règles régex...</small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex m-2">
+                            <label for="confirm_password" class="w-25 col-form-label">Confirmation</label>
+                            <div class="w-100">
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+                                       value="">
+                                <small id="confirm_passwordHelp" class="alert-dismissible alert-danger">
+                                    Les mots de passes ne correspondent pas.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex m-2">
+                            <label for="current_password" class="w-25 col-form-label">Mot de passe actuel</label>
+                            <div class="w-100">
+                                <input type="password" class="form-control" id="current_password" name="current_password"
+                                       value="">
+                                <small id="current_passwordHelp" class="alert-dismissible alert-danger">
+                                    Mot de passe erroné.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex m-2">
+                            <label for="photo" class="w-25 col-form-label">Ma photo</label>
+                            <div class="w-100">
+                                <a class="btn btn-outline-primary w-100" href="#" role="button">Télécharger</a>
+                            </div>
+                        </div>
+
+                        <div class="m-2 mt-4">
+                            <div class="">
+                                <input type="submit" class="btn btn-lg btn-primary w-100" value="Enregistrer" id="update_profile"></div>
+                        </div>
+                    </fieldset>
+
+                </form>
+        </div>
+    </div>
 {% endblock %}
 
