@@ -20,10 +20,15 @@ security:
                 login_path: app_login
                 check_path: app_login
                 enable_csrf: true
+            # Permet de vérifier des informations avant le login. (Compte actif/inactif)
+            user_checker: App\Security\UserChecker
             logout:
                 path: app_logout
                 # where to redirect after logout
                 # target: app_any_route
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
