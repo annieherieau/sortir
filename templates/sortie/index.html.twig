@@ -71,7 +71,7 @@
                         {#                S'INSCRIRE' #}
                         {% if not isRegistred  and s.state.nb == 1
                             and s.participants.count < s.maxRegistrationNumber %}
-                            <a href="#" title="S'inscrire">S'inscrire</a>
+                            <a href="{{ path('participant_sortie_register',{'id': s.id}) }}"  title="S'inscrire">S'inscrire</a>
                         {% endif %}
 
                         {#                PUBLIER/SUPPRIMER #}

@@ -246,17 +246,22 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->sorties;
     }
 
-    public function addSorties(Sortie $sortie): static
+    /**
+     * Attention:
+     * Les contrôles se font sur sortie->addParticipants
+     * @param Sortie $sortie
+     * @return $this
+     */
+    public function addSortie(Sortie $sortie): static
     {
         if (!$this->sorties->contains($sortie)) {
             $this->sorties->add($sortie);
-            $sortie->addParticipant($this);
         }
 
         return $this;
     }
 
-    public function removeSorties(Sortie $sortie): static
+    public function removeSortie(Sortie $sortie): static
     {
         if ($this->sorties->removeElement($sortie)) {
             $sortie->removeParticipant($this);

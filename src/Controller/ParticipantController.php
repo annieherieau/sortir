@@ -3,14 +3,16 @@
 namespace App\Controller;
 
 
+use App\Entity\EtatEnum;
 use App\Entity\Participant;
+use App\Entity\Sortie;
 use App\Form\ParticipantType;
 use App\Form\UpdatePasswordType;
+use App\Repository\EtatRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Log\Logger;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -108,5 +110,24 @@ final class ParticipantController extends AbstractController
             'form' => $form,
             'pwdForm' => $pwdForm,
         ]);
+    }
+
+    #[Route('/sortie/{id}/register', name: 'sortie_register', methods: ['GET'])]
+    public function sortie_register(Sortie $sortie, EntityManagerInterface $entityManager, EtatRepository $etatRepository): Response
+    {
+        $user = $this->getUser() ?? new Participant();
+
+        if(!$sortie->isRegistred($user) and $sortie->getStateNb() === EtatEnum::OUVERTE->value){
+            $sortie->addParticipant($user, $etatRepository);
+          try{
+              $entityManager->persist($sortie);
+              $entityManager->flush();
+              //$this->addFlash('succes', "La sortie ".$sortie->getName()." a été publiée.");
+            }catch (\Exception $e){
+                $this->addFlash('warning', "Une erreur est survenu lors de l'inscription, veuillez contacter l'administrateur");
+            }
+        }
+
+        return $this->redirectToRoute('sortie_index');
     }
 }
