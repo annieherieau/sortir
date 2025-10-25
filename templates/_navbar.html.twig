@@ -1,10 +1,19 @@
-<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+{#  Route en cours : pour rendre le lien actif #}
+{% set currentPath = app.request.attributes.get('_route') %}
+
+{# les Administrateurs ont une navbar différente #}
+<nav class="navbar navbar-expand-lg {{ is_granted('ROLE_ADMIN') ? 'bg-danger' : 'bg-primary'}}" data-bs-theme="dark">
     <div class="container">
-        <h1><a class="navbar-brand" href="#">Sortir !</a></h1>
+        <div class="logo_container h2">
+            <a class="navbar-brand" href="{{ url('sortie_index') }}">
+                <img class="mr-3" src="{{ asset('img/user-placeholder.jpg') }}" alt="logo" height="50">
+                Sortir !</a>
+        </div>
+
         <div>
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('sortie_index') }}"
+                    <a class="nav-link {{ currentPath == 'sortie_index' ? 'active' : '' }}" href="{{ path('sortie_index') }}"
                     title="Accueil">
                     Accueil</a>
                 </li>
@@ -16,14 +25,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"
-                           title="Mon compte">
-                            Mon compte
+                        <a class="nav-link {{ currentPath == 'participant_myprofile' ? 'active' : '' }}" href="{{ path('participant_myprofile') }}"
+                           title="Gérer mon profil">
+                            Mon profil
                         </a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link"  href="{{ path('app_login') }}"
+                        <a class="nav-link {{ currentPath == 'app_login' ? 'active' : '' }}"  href="{{ path('app_login') }}"
                            title="Login">
                             Login
                         </a>
