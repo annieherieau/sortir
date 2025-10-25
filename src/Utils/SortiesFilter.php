@@ -5,7 +5,6 @@ namespace App\Utils;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use DateTime;
-use phpDocumentor\Reflection\Types\Boolean;
 
 class SortiesFilter
 {
@@ -41,13 +40,14 @@ class SortiesFilter
             if(!$sortie->getParticipants()->contains($user)){
                 return false;
             }
-        } elseif ($this->isNotRegisteredUser){
+        }
+        if ($this->isNotRegisteredUser){
             if($sortie->getParticipants()->contains($user)){
                 return false;
             }
         }
         if($this->isFinishedSortie){
-            return $sortie->getState()->getNb() === 6;
+            return $sortie->getState()->getNb() === 4;
         }
         return true;
     }
