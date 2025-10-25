@@ -25,12 +25,17 @@ class UpdatePasswordType extends AbstractType
                     'options' => [
                         'attr' => [
                             'autocomplete' => 'new-password',
+                            'minlength' => 8,
+                            'maxlength' => 40
                         ],
                     ],
                     'first_options' =>
-                        ['label' => 'Nouveau Mot de passe'],
+                        ['label' => 'Nouveau Mot de passe',
+                            'help'=> 'Minimum 8 caractères',
+                            'empty_data' => '',],
                     'second_options' =>
-                        ['label' => 'Confirmation'],
+                        ['label' => 'Confirmation',
+                            'empty_data' => '',],
                     'type' => PasswordType::class,
                     'invalid_message' => 'Les mots de passe ne correspondent pas.',
                     'mapped' => false, // traitement dans le controller

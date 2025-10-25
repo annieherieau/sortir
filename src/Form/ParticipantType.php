@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ParticipantType extends AbstractType
 {
@@ -25,13 +26,18 @@ class ParticipantType extends AbstractType
                 'disabled' => true, // non modifiable
             ])
 
-            ->add('pseudo', TextType::class,['label' => 'Pseudo'])
-            ->add('firstname', TextType::class,['label' => 'Prénom'])
-            ->add('name', textType::class,['label' => 'Nom'])
+            ->add('pseudo', TextType::class,[
+                'label' => 'Pseudo',
+               'empty_data' => '',])
+            ->add('firstname', TextType::class,['label' => 'Prénom',
+                'empty_data' => '',])
+            ->add('name', textType::class,['label' => 'Nom',
+                'empty_data' => '',])
             ->add('phoneNumber', TextType::class,
-                ['label' => 'Téléphone', 'required' => false])
+                ['label' => 'Téléphone',
+                    'required' => false])
             ->add('email', EmailType::class,
-                ['label' => 'Email'])
+                ['label' => 'Email','empty_data' => ''])
 
                 // pour vérification dans le controller avant mise à jour des données
             ->add('current_password', PasswordType::class,

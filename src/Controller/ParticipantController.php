@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Log\Logger;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -33,6 +34,7 @@ final class ParticipantController extends AbstractController
         $form = $this->createForm(ParticipantType::class, $user);
         $form->handleRequest($request);
 
+
         // Formulaire de modification de mot de passe
         $pwdForm = $this->createForm(UpdatePasswordType::class);
         $pwdForm->handleRequest($request);
@@ -40,7 +42,7 @@ final class ParticipantController extends AbstractController
         // Traitement du Formulaire des infos utilisateur
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // vrifier le mot de passe actuel
+            // vérifier le mot de passe actuel
             $current_password = $form->get('current_password')->getData();
             if ($userPasswordHasher->isPasswordValid($user, $current_password)) {
                 try {
@@ -48,14 +50,23 @@ final class ParticipantController extends AbstractController
                     $entityManager->persist($user);
                     $entityManager->flush();
                     $this->addFlash('success', 'Modifications enregistrées');
-                } catch (\Exception $exception) {
-                    $this->addFlash('danger', "Une erreur s'est produite :" . $exception->getMessage());
+                } catch (\Exception $e) {
+                    $error = $e->getMessage();
+                    $message = "une erreur s'est produite lors de l'enregistrement";
+                    if(str_contains($error, 'UNIQ_IDENTIFIER_PSEUDO')){
+                        $message = 'Ce Pseudo est déjà utilisé';
+                    }
+                    if(str_contains($error, 'UNIQ_IDENTIFIER_EMAIL')){
+                        $message = 'Cet Email est déjà utilisé';
+                    }
+                    $this->addFlash('danger', $message);
+                    return $this->redirectToRoute('participant_myprofile');
                 }
 
             } else {
-                $this->addFlash('danger', "Mot de passe incorrect: les modifications n'ont pas été enregistrées.");
+                $this->addFlash('warning', "Mot de passe incorrect: les modifications n'ont pas été enregistrées.");
             }
-            return $this->redirectToRoute('participant_myprofile');
+           return $this->redirectToRoute('participant_myprofile');
         }
 
         // Traitement du Formulaire de modification de mot de passe
@@ -65,8 +76,15 @@ final class ParticipantController extends AbstractController
             $currentPassword = $pwdForm->get('current_password')->getData();
             if ($userPasswordHasher->isPasswordValid($user, $currentPassword)) {
 
-                // hasher le nouveau mot de passe
                 $newPassword = $pwdForm->get('password')->getData();
+
+                // nouveau mot de passe identique à l'actuel
+                if ($newPassword === $currentPassword) {
+                    $this->addFlash('warning', "Le nouveau mot de passe est indentique à l'ancien, veuillez réessayer");
+                    return $this->redirectToRoute('participant_myprofile');
+                }
+
+                // hasher le nouveau mot de passe
                 $hashed_password = $userPasswordHasher->hashPassword($user, $newPassword);
 
                 try {
@@ -74,14 +92,14 @@ final class ParticipantController extends AbstractController
                     $user->setPassword($hashed_password);
                     $entityManager->persist($user);
                     $entityManager->flush();
-                    $this->addFlash('success', 'Mot de passe modifié');
+                    $this->addFlash('success', 'Votre mot de passe a été modifié');
                 } catch (\Exception $exception) {
                     $this->addFlash('danger', "Une erreur s'est produite :" . $exception->getMessage());
                 }
 
 
             } else {
-                $this->addFlash('danger', "Mot de passe actuel incorrect: le mot de passe n'a pa été modifié");
+                $this->addFlash('warning', "Mot de passe actuel est  incorrect, veuillez réessayer");
             }
             return $this->redirectToRoute('participant_myprofile');
         }

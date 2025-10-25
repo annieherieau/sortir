@@ -11,3 +11,14 @@ body {
       background-color: #fff;
       height: 2em;
   }
+.required:after {
+    color:  red;
+    content: " *";
+    position: relative;
+}
+
+.required-before:before {
+    color:  red;
+    content: "* ";
+    position: relative;
+}
