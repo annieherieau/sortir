@@ -42,7 +42,6 @@ class SortieRepository extends ServiceEntityRepository
             ->setParameter('campus', $campus)
             ->orderBy('s.startingDate', 'DESC')
             ->getQuery();
-        dump($query);
         return $query->getResult();
     }
     //    /**

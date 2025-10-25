@@ -2,41 +2,53 @@
 
 namespace App\Controller;
 
-use App\Entity\Participant;
-use App\Repository\CampusRepository;
+use App\Form\SortieFilterType;
 use App\Repository\SortieRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/', name: 'sortie_', methods: ['GET'])]
 final class SortieController extends AbstractController
 {
-    /**
-     * @var \App\Entity\Campus[]|array
-     */
-    private array $campusList;
-
-    public function __construct(CampusRepository $campusRepository)
-    {
-        $this->campusList = $campusRepository->findAll();
-    }
-
-    #[Route('', name: 'index')]
-    public function index(SortieRepository $sortieRepository): Response
+    #[Route('', name: 'index', methods: ['POST'])]
+    public function index(Request $request,SortieRepository $sortieRepository): Response
     {
         $user = $this->getUser();
-        if (!$user) {
+        if (!$user){
             return $this->redirectToRoute('app_login');
         }
-        $campus = $user->getCampus();
 
-        $sorties = $sortieRepository->findByCampus($campus);
-        dump($sorties);
+        $campus = $user->getCampus();
+        $sortiesList = $sortieRepository->findByCampus($campus);
+        $sortieFiltersForm = $this->createForm(SortieFilterType::class);
+        $sortieFiltersForm->handleRequest($request);
+
+        if ($sortieFiltersForm->isSubmitted()) {
+            $filteredList = [];
+            $filters = $sortieFiltersForm->getData();
+            foreach ($sortiesList as $sortie) {
+                if ($filters->filterSortie($sortie, $user)) {
+                    $filteredList[] = $sortie;
+                }
+            }
+            $sortiesList = $filteredList;
+            dump($sortiesList);
+            return $this->render('sortie/index.html.twig', [
+                'campus' => $campus,
+                'sorties' => $sortiesList,
+                'sortieFiltersForm' => $sortieFiltersForm->createView(),
+            ]);
+        }
+        dump($sortiesList);
         return $this->render('sortie/index.html.twig', [
-            'campusList' => $this->campusList,
             'campus' => $campus,
-            'sorties' => $sorties,
+            'sorties' => $sortiesList,
+            'sortieFiltersForm' => $sortieFiltersForm->createView(),
         ]);
     }
+
+
 }

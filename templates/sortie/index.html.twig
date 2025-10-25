@@ -12,15 +12,16 @@
 
     {#        TODO: block filtre #}
     <div class="w-100 flex float-start">
-        <label>
-            <select>
-                {% for c in campusList %}
-                    {% set selected = c == campus ? 'selected' : '' %}
-                    <option value="{{ c.id }}" {{ selected }}>{{ c.name }}</option>
-                {% endfor %}
-            </select>
-        </label>
+
+        <div>
+            {{ form_start(sortieFiltersForm) }}
+            <h3> {{ campus.name }}</h3>
+            {{ form_widget(sortieFiltersForm) }}
+            <button type="submit"> Rechercher </button>
+            {{ form_end(sortieFiltersForm) }}
+        </div>
     </div>
+
     <table class="table table-light table-bordered border-black">
         <thead class="">
         <tr class="table-dark">
@@ -37,8 +38,8 @@
         <tbody>
         {% for s in sorties %}
             {% set isRegistred = s.registred(app.user) %}
-            {% set isTheOwner = s.theOwner(app.user) %}
-            {% set visible = not isTheOwner and s.state.nb == 0 ? false : true %}
+            {% set isTheOwner = s.isTheOwner(app.user) %}
+            {% set visible = isTheOwner or not s.state.nb == 0 %}
 
             {% if visible %}
                 <tr>
@@ -83,8 +84,6 @@
                         {% if (s.state.nb > 0 and s.state.nb < 3) and ( is_granted('ROLE_ADMIN') or isTheOwner ) %}
                             <a href="#" title="Annuler la sortie">Annuler</a>
                         {% endif %}
-
-
                     </td>
                 </tr>
             {% endif %}
