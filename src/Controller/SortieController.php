@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Participant;
+use App\Entity\Campus;
 use App\Repository\CampusRepository;
 use App\Repository\SortieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class SortieController extends AbstractController
 {
     /**
-     * @var \App\Entity\Campus[]|array
+     * @var Campus[]|array
      */
     private array $campusList;
 
@@ -32,11 +32,20 @@ final class SortieController extends AbstractController
         $campus = $user->getCampus();
 
         $sorties = $sortieRepository->findByCampus($campus);
-        dump($sorties);
+
         return $this->render('sortie/index.html.twig', [
             'campusList' => $this->campusList,
             'campus' => $campus,
             'sorties' => $sorties,
+        ]);
+    }
+
+    #[Route('/sortie/{id}/detail', name: 'detail',requirements: ['id'=>'\d+'], methods: ['GET'])]
+    public function detail(SortieRepository $sortieRepository, int $id): Response{
+        $sortie = $sortieRepository->findOneBy(['id'=>$id]);
+
+        return $this->render('sortie/detail.html.twig', [
+            'sortie' => $sortie,
         ]);
     }
 }
