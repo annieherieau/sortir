@@ -107,8 +107,7 @@ final class SortieController extends AbstractController
     {
         if($sortie === null){
             $titre = 'Créer une sortie';
-            $sortie = new Sortie()
-            ;
+            $sortie = new Sortie();
             $user = $this->getUser();
             $sortie->setCampus($user->getCampus());
             $sortie->setOwner($user);
@@ -118,11 +117,19 @@ final class SortieController extends AbstractController
             $durationInMinutes = 0;
         }else{
             $titre = 'Modifier la sortie';
+
+            // Modification des sortie en création uniquement
+            if($sortie->getStateNb() !== EtatEnum::ENCREATION->value){
+                return $this->redirectToRoute('sortie_index');
+            }
+            
+            // durée en minutes à partir de la dateHeure de fin
             $duration = $sortie->getDuration();
             $durationInMinutes = 24*60*$duration->d + 60*$duration->h + $duration->i;
         }
 
         $sortieForm = $this->createForm(SortieType::class, $sortie);
+        // Durée en minutes par défaut dans le formulaire
         if ($durationInMinutes){
             $sortieForm->get('durationInMunites')->setData($durationInMinutes);
         }
@@ -130,11 +137,12 @@ final class SortieController extends AbstractController
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
 
+            // recalcul de la dateHeure de fin
             $duration =  strval($sortieForm->get('durationInMunites')->getData());
             $sortie->setEndingDateWithDurationInMunutes($duration);
 
+            // vérifier si la sortie doit être publiée
             $publier = $sortieForm->get('publier')->getData();
-
             if($publier){
                 $sortie->setState($this->etats[EtatEnum::OUVERTE->value]);
             }
@@ -143,16 +151,9 @@ final class SortieController extends AbstractController
 
                 $entityManager->persist($sortie);
                 $entityManager->flush();
-                $message  = 'Votre sortie a été enregistrée';
 
-                if($publier){
-                    $this->addFlash('success', $message.' et publiée');
-                    return $this->redirectToRoute('sortie_publish', ['id' => $sortie->getId()]);
-                }else{
-                    $this->addFlash('success', $message);
-                    return $this->redirectToRoute('sortie_index');
-                }
-
+                $this->addFlash('success', 'Votre sortie a été enregistrée'.($publier ? ' et publiée' :''));
+                return $this->redirectToRoute('sortie_index');
             }catch (\Exception $e){
                 $this->addFlash('danger', $e->getMessage());
                 return $this->redirectToRoute('sortie_edit', ['id' => $sortie->getId()]);
