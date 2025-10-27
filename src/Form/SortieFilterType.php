@@ -16,10 +16,14 @@ use Symfony\Component\Validator\Constraints\GreaterThan;
 
 class SortieFilterType extends AbstractType
 {
-    // TODO ajouter filtre par campus
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('campus', EntityType::class, [
+                'class' => Campus::class,
+                'choice_label' => 'name',
+            ])
             ->add('sortieName', TextType::class, [
                 'label' => 'Nom partiel ou complet de la sortie',
                 'required' => false,
