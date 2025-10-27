@@ -20,12 +20,12 @@
                 <span> {{ sortie.registerLimitDate | date('d/m/Y h:i') }} </span>
             </p>
             <p class="d-inline-flex">
-                <span class=" pe-2"><strong> Nombre d'inscrits': </strong> </span>
+                <span class=" pe-2"><strong> Nombre d'inscrits: </strong> </span>
                 <span> {{ sortie.participants.count }}/{{ sortie.maxRegistrationNumber }} </span>
             </p>
             <p class="d-inline-flex">
                 <span class=" pe-2"><strong> Durée en minutes: </strong> </span>
-                <span> {{ sortie.duration | date('%i') }} </span>
+                <span> {{ 24*60 * sortie.duration | date('%d') + 60 * sortie.duration | date('%h') + sortie.duration | date('%i') }} </span>
             </p>
         </div>
         <div class="d-flex flex-column">
