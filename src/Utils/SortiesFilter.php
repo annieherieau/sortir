@@ -9,8 +9,8 @@ use DateTime;
 class SortiesFilter
 {
     private string $sortieName;
-    private DateTime $minStartDate;
-    private DateTime $maxStartDate;
+    private ?DateTime $minStartDate = null;
+    private ?DateTime $maxStartDate = null;
     private bool $isOwner;
     private bool $isRegisteredUser;
     private bool $isNotRegisteredUser;
@@ -22,13 +22,14 @@ class SortiesFilter
 
     public function filterSortie(Sortie $sortie, Participant $user): bool{
         $startingDate = $sortie->getStartingDate();
+
         if(!str_contains($sortie->getName(), $this->sortieName)){
             return false;
         }
-        if($startingDate < $this->minStartDate){
+        if($this->minStartDate && $startingDate < $this->minStartDate){
             return false;
         }
-        if($startingDate > $this->maxStartDate){
+        if($this->maxStartDate && $startingDate > $this->maxStartDate){
             return false;
         }
         if($this->isOwner){
@@ -69,7 +70,7 @@ class SortiesFilter
 
     public function setMinStartDate(DateTime $minStartDate): void
     {
-        $this->minStartDate = $minStartDate;
+            $this->minStartDate = $minStartDate;
     }
 
     public function getMaxStartDate(): DateTime

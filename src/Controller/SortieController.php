@@ -2,8 +2,9 @@
 
 namespace App\Controller;
 
-use App\Form\SortieFilterType;
 use App\Entity\Campus;
+use App\Entity\Participant;
+use App\Form\SortieFilterType;
 use App\Entity\Etat;
 use App\Entity\Sortie;
 use App\Entity\EtatEnum;
@@ -17,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/', name: 'sortie_', methods: ['GET', 'POST'])]
+#[Route('/', name: 'sortie_', methods: ['GET'])]
 final class SortieController extends AbstractController
 {
     /**
@@ -25,12 +26,15 @@ final class SortieController extends AbstractController
      */
     private array $etats;
 
+    private array $campusList;
+
     public function __construct(CampusRepository $campusRepository, EtatRepository $etatRepository)
     {
+        $this->campusList = $campusRepository->findAll();
         $this->etats = $etatRepository->findAll();
     }
 
-    #[Route('', name: 'index')]
+    #[Route('', name: 'index', methods: ['POST'])]
     public function index(Request $request,SortieRepository $sortieRepository): Response
     {
         $user = $this->getUser();
@@ -60,7 +64,7 @@ final class SortieController extends AbstractController
         ]);
     }
 
-    #[Route('/sortie/{id}/detail', name: 'detail',requirements: ['id'=>'\d+'], methods: ['GET'])]
+    #[Route('/sortie/{id}/detail', name: 'detail',requirements: ['id'=>'\d+'])]
     public function detail(SortieRepository $sortieRepository, int $id): Response
     {
         $sortie = $sortieRepository->findOneBy(['id' => $id]);
@@ -77,7 +81,7 @@ final class SortieController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    #[Route('/sortie/{id}/publish', name: 'publish', methods: ['GET'])]
+    #[Route('/sortie/{id}/publish', name: 'publish')]
     public function publish(Sortie $sortie, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();

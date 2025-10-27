@@ -16,6 +16,7 @@ use Symfony\Component\Validator\Constraints\GreaterThan;
 
 class SortieFilterType extends AbstractType
 {
+    // TODO ajouter filtre par campus
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -26,13 +27,15 @@ class SortieFilterType extends AbstractType
             ])
             ->add('minStartDate', DateType::class, [
                 'widget' => 'single_text',
-                'label' => 'Entre',
-                'required' => true,
+                'label' => 'Entre ',
+                'empty_data' => '01/01/1970',
+                'required' => false,
             ])
             ->add('maxStartDate', DateType::class, [
                 'widget' => 'single_text',
-                'label' => 'et',
-                'required' => true,
+                'label' => 'et ',
+                'empty_data' => '01/01/3000',
+                'required' => false,
             ])
             ->add('isOwner', CheckboxType::class, [
                 'label' => 'Sorties dont je suis l\'organisateur/trice',
