@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+{% endblock %}
+
+{% block main %}
+    <h1 class="align-self-center text-center">Détail de la sortie</h1>
+    <div class="d-flex flex-row justify-content-evenly my-5">
+        <div class="d-flex flex-column">
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Nom de la sortie: </strong> </span>
+                <span> {{ sortie.name }} </span>
+            </p>
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Date et heure de la sortie: </strong> </span>
+                <span> {{ sortie.startingDate | date('d/m/Y h:i') }} </span>
+            </p>
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Date limite d'inscription: </strong> </span>
+                <span> {{ sortie.registerLimitDate | date('d/m/Y h:i') }} </span>
+            </p>
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Nombre d'inscrits': </strong> </span>
+                <span> {{ sortie.participants.count }}/{{ sortie.maxRegistrationNumber }} </span>
+            </p>
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Durée en minutes: </strong> </span>
+                <span> {{ sortie.duration | date('%i') }} </span>
+            </p>
+        </div>
+        <div class="d-flex flex-column">
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Campus: </strong> </span>
+                <span> {{ sortie.campus.name }} </span>
+            </p>
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Ville: </strong> </span>
+                <span> {{ sortie.lieu.ville.name }} </span>
+            </p>
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Lieu: </strong> </span>
+                <span> {{ sortie.lieu.name }} </span>
+            </p>
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Rue: </strong> </span>
+                <span> {{ sortie.lieu.street }} </span>
+            </p>
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Code Postal: </strong> </span>
+                <span> {{ sortie.lieu.ville.postalCode }} </span>
+            </p>
+            {% if sortie.lieu.latitude and sortie.lieu.longitude %}
+                <p class="d-inline-flex">
+                    <span class=" pe-2"><strong> Latitude / Longitude: </strong> </span>
+                    <span> </span>
+                </p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="d-inline-flex justify-content-center my-2">
+        <p>
+            <span class=" pe-2"><strong> Description: </strong> </span>
+            <span> {{ sortie.description }} </span>
+        </p>
+    </div>
+    <div class="my-2">
+        <table class="table table-light table-bordered border-black">
+            <thead class="table-dark">
+                <tr>
+                    <th>Pseudo</th>
+                    <th>Nom</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in sortie.participants %}
+                    <tr>
+                        <td><a href="#" title="Afficher le profil">{{ p.pseudo }}</a></td>
+                        <td> {{ p.name }} {{ p.firstName }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}
+

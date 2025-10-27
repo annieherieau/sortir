@@ -37,8 +37,8 @@
         <tbody>
         {% for s in sorties %}
             {% set isRegistred = s.registred(app.user) %}
-            {% set isTheOwner = s.theOwner(app.user) %}
-            {% set visible = not isTheOwner and s.state.nb == 0 ? false : true %}
+            {% set isTheOwner = s.isTheOwner(app.user) %}
+            {% set visible = isTheOwner or s.state.nb > 0 %}
 
             {% if visible %}
                 <tr>
@@ -54,15 +54,12 @@
                         {% if isTheOwner %}
                             {{ s.owner.pseudo }}
                         {% else %}
-                            {#                    TODO ajouter le lien vers la consultation du profil #}
+                            {# TODO ajouter le lien vers la consultation du profil #}
                             <a href="/" title="Afficher le profil">{{ s.owner.pseudo }} </a>
                         {% endif %}
                     </td>
-                    {#        ******* ACTIONS  ******* #}
-                    {#               TODO ajouter le liens #}
                     <td>
-                        {#               AFFICHER #}
-                        <a href="#" title="Afficher les détails de la sortie">Afficher</a>
+                        <a href="{{ path('sortie_detail',{'id':s.id}) }}" title="Afficher les détails de la sortie">Afficher</a>
 
                         {#                SE DESISTER #}
                         {% if isRegistred  and (s.state.nb == 1 or s.state.nb == 2) %}
@@ -83,8 +80,6 @@
                         {% if (s.state.nb > 0 and s.state.nb < 3) and ( is_granted('ROLE_ADMIN') or isTheOwner ) %}
                             <a href="#" title="Annuler la sortie">Annuler</a>
                         {% endif %}
-
-
                     </td>
                 </tr>
             {% endif %}

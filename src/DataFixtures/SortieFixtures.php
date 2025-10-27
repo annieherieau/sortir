@@ -34,7 +34,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $sortie->setDescription($faker->sentence());
             $sortie->setLieu($faker->randomElement($lieux));
 
-            $this->setDates($sortie, 5, 20, -1);
+            $this->setDates($sortie, 5, 20, 1);
 
             $maxRegistered = random_int(2,10);
             $sortie->setMaxRegistrationNumber($maxRegistered);
@@ -65,7 +65,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $sortie->setDescription($faker->sentence());
             $sortie->setLieu($faker->randomElement($lieux));
 
-            $this->setDates($sortie, 5, 20, -1);
+            $this->setDates($sortie, 5, 20, 1);
 
             $maxRegistered = random_int(2, 10);
             $sortie->setMaxRegistrationNumber($maxRegistered);
@@ -91,7 +91,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $sortie->setDescription($faker->sentence());
             $sortie->setLieu($faker->randomElement($lieux));
 
-            $this->setDates($sortie, 0, 1, -1);
+            $this->setDates($sortie, 0, 1, 1);
 
             $maxRegistered = random_int(2, 10);
             $sortie->setMaxRegistrationNumber($maxRegistered);
@@ -116,7 +116,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $sortie->setDescription($faker->sentence());
             $sortie->setLieu($faker->randomElement($lieux));
 
-            $this->setDates($sortie, -1,0, -1);
+            $this->setDates($sortie, -1,0, 1);
 
             $maxRegistered = random_int(2,10);
             $sortie->setMaxRegistrationNumber($maxRegistered);
@@ -144,7 +144,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $sortie->setDescription($faker->sentence());
             $sortie->setLieu($faker->randomElement($lieux));
 
-            $this->setDates($sortie, 5, 20, -1);
+            $this->setDates($sortie, 5, 20, 1);
 
             $maxRegistered = random_int(2,10);
             $sortie->setMaxRegistrationNumber($maxRegistered);
@@ -174,7 +174,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $sortie->setDescription($faker->sentence());
             $sortie->setLieu($faker->randomElement($lieux));
 
-            $this->setDates($sortie, -40, -30, -1);
+            $this->setDates($sortie, -40, -30, 1);
 
             $maxRegistered = random_int(2,10);
             $sortie->setMaxRegistrationNumber($maxRegistered);
