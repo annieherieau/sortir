@@ -174,8 +174,8 @@ final class SortieController extends AbstractController
     public function delete(Request $request, ?Sortie $sortie, EntityManagerInterface $entityManager): Response
     {
         if($sortie->isTheOwner($this->getUser()) and $sortie->getStateNb() === EtatEnum::ENCREATION->value){
-            // TODO sécurité contre attaques CSRT
-           // if($this->isCsrfTokenValid('delete-'.$sortie->getId(), $request->get('token'))){
+            // sécurité contre attaques CSRT
+            if($this->isCsrfTokenValid('delete-'.$sortie->getId(), $request->get('token'))){
                 try{
                     $entityManager->remove($sortie);
                     $entityManager->persist($sortie);
@@ -184,9 +184,9 @@ final class SortieController extends AbstractController
                 }catch (\Exception $e){
                     $this->addFlash('warning', "La sortie n'a pas pu être supprimée, veuillez contacter l'administrateur");
                 }
-           // }else{
-//                $this->addFlash('danger', 'Attaque CSRT : le sortie n\'a pas pu être supprimée !');
-//            }
+            }else{
+                $this->addFlash('danger', 'Attaque CSRT : le sortie n\'a pas pu être supprimée !');
+            }
 
         }
         return $this->redirectToRoute('sortie_index');
