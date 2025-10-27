@@ -2,12 +2,14 @@
 
 namespace App\Utils;
 
+use App\Entity\Campus;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use DateTime;
 
 class SortiesFilter
 {
+    private Campus $campus;
     private string $sortieName;
     private ?DateTime $minStartDate = null;
     private ?DateTime $maxStartDate = null;
@@ -20,9 +22,12 @@ class SortiesFilter
     {
     }
 
-    public function filterSortie(Sortie $sortie, Participant $user): bool{
+    public function filterSortie(Sortie $sortie, Participant $user, Campus $campus): bool{
         $startingDate = $sortie->getStartingDate();
 
+        if($sortie->getCampus()->getId() !== $campus->getId()){
+            return false;
+        }
         if(!str_contains($sortie->getName(), $this->sortieName)){
             return false;
         }
@@ -53,6 +58,16 @@ class SortiesFilter
         return true;
     }
 
+
+    public function getCampus(): Campus
+    {
+        return $this->campus;
+    }
+
+    public function setCampus(Campus $campus): void
+    {
+        $this->campus = $campus;
+    }
     public function getSortieName(): string
     {
         return $this->sortieName;

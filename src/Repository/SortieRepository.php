@@ -26,6 +26,16 @@ class SortieRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findAllActive() :array{
+        return $this->createQueryBuilder('s')
+            ->join('s.state', 'e')
+            ->where('e.nb < :limit' )
+            ->setParameter('limit',6)
+            ->orderBy('s.startingDate', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     /**
      * Renvoie touts les sorties d'un campus sauf les historisés
      * @param Campus $campus
