@@ -101,29 +101,43 @@ final class SortieController extends AbstractController
         return $this->redirectToRoute('sortie_index');
     }
 
-    #[Route('/sortie/create', name: 'create', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/sortie/create', name: 'create',  methods: ['POST'])]
+    #[Route('/sortie/{id}/edit', name: 'edit', methods: ['POST'])]
+    public function createOrEdit(Request $request, EntityManagerInterface $entityManager, Sortie $sortie=null, int $id=0): Response
     {
-        $user = $this->getUser();
-        $sortie = new Sortie();
-        $sortie->setCampus($user->getCampus());
-        $sortie->setOwner($user);
-        $sortie->setState($this->etats[EtatEnum::ENCREATION->value]);
-
+        if($sortie === null){
+            $titre = 'Créer une sortie';
+            $sortie = new Sortie()
+            ;
+            $user = $this->getUser();
+            $sortie->setCampus($user->getCampus());
+            $sortie->setOwner($user);
+            if($sortie->getState() === null){
+                $sortie->setState($this->etats[EtatEnum::ENCREATION->value]);
+            }
+            $durationInMinutes = 0;
+        }else{
+            $titre = 'Modifier la sortie';
+            $duration = $sortie->getDuration();
+            $durationInMinutes = 24*60*$duration->d + 60*$duration->h + $duration->i;
+        }
 
         $sortieForm = $this->createForm(SortieType::class, $sortie);
+        if ($durationInMinutes){
+            $sortieForm->get('durationInMunites')->setData($durationInMinutes);
+        }
         $sortieForm->handleRequest($request);
-        dump($sortieForm);
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+
             $duration =  strval($sortieForm->get('durationInMunites')->getData());
             $sortie->setEndingDateWithDurationInMunutes($duration);
 
-//            $publier = $sortieForm->get('publier')->getData();
-//
-//            if($publier){
-//                $sortie->setState($this->etats[EtatEnum::OUVERTE->value]);
-//            }
+            $publier = $sortieForm->get('publier')->getData();
+
+            if($publier){
+                $sortie->setState($this->etats[EtatEnum::OUVERTE->value]);
+            }
 
             try{
 
@@ -131,23 +145,23 @@ final class SortieController extends AbstractController
                 $entityManager->flush();
                 $message  = 'Votre sortie a été enregistrée';
 
-//                if($publier){
-//                    $this->addFlash('success', $message.' et publiée');
-//                    return $this->redirectToRoute('sortie_publish', ['id' => $sortie->getId()]);
-//                }else{
+                if($publier){
+                    $this->addFlash('success', $message.' et publiée');
+                    return $this->redirectToRoute('sortie_publish', ['id' => $sortie->getId()]);
+                }else{
                     $this->addFlash('success', $message);
                     return $this->redirectToRoute('sortie_index');
-//                }
+                }
 
             }catch (\Exception $e){
                 $this->addFlash('danger', $e->getMessage());
-                return $this->redirectToRoute('sortie_create');
+                return $this->redirectToRoute('sortie_edit', ['id' => $sortie->getId()]);
             }
 
         }
 
-        return $this->render('sortie/create.html.twig', [
-            'titre' => 'Créer une sortie',
+        return $this->render('sortie/form.html.twig', [
+            'titre' => $titre,
             "sortie" => $sortie,
             'sortieForm' => $sortieForm->createView(),
         ]);
