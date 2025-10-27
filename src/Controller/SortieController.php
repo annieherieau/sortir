@@ -2,8 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Campus;
-use App\Entity\Participant;
+
 use App\Form\SortieFilterType;
 use App\Entity\Etat;
 use App\Entity\Sortie;
@@ -28,9 +27,13 @@ final class SortieController extends AbstractController
 
     private array $campusList;
 
-    public function __construct(CampusRepository $campusRepository, EtatRepository $etatRepository)
+    private array $sortiesList;
+
+    public function __construct(CampusRepository $campusRepository, EtatRepository $etatRepository,
+                                SortieRepository $sortieRepository)
     {
         $this->campusList = $campusRepository->findAll();
+        $this->sortiesList = $sortieRepository->findAllActive();
         $this->etats = $etatRepository->findAll();
     }
 
@@ -43,21 +46,23 @@ final class SortieController extends AbstractController
         }
 
         $campus = $user->getCampus();
-        $sortiesList = $sortieRepository->findByCampus($campus);
+        $sortiesList = $this->sortiesList;
         $filters = new SortiesFilter();
         $sortieFiltersForm = $this->createForm(SortieFilterType::class, $filters);
         $sortieFiltersForm->handleRequest($request);
 
         if ($sortieFiltersForm->isSubmitted()) {
+            $selectedCampus = $sortieFiltersForm->getData()->getCampus();
             $filteredList = [];
             foreach ($sortiesList as $sortie) {
-                if ($filters->filterSortie($sortie, $user)) {
+                if ($filters->filterSortie($sortie, $user, $selectedCampus)) {
                     $filteredList[] = $sortie;
                 }
             }
             $sortiesList = $filteredList;
         }
         return $this->render('sortie/index.html.twig', [
+            'campusList' => $this->campusList,
             'campus' => $campus,
             'sorties' => $sortiesList,
             'sortieFiltersForm' => $sortieFiltersForm->createView(),
