@@ -12,7 +12,9 @@
 
     <input type="submit" class="btn btn-primary" value="Enregistrer" id="submit-enregistrer">
     <input type="submit" class="btn btn-primary" value="Publier" id="submit-publier" onclick="publish(event)">
+    {% if sortie.id != 0 %}
     <a class="btn btn-danger" href="{{ path('sortie_delete', {'id' : sortie.id, 'token' : csrf_token('delete-'~sortie.id)}) }}">Supprimer</a>
+    {% endif %}
     <a class="btn btn-outline-primary" href="{{ path('sortie_index') }}">Retour à la liste</a>
 
     {{ form_end(sortieForm) }}

@@ -107,9 +107,9 @@ final class SortieController extends AbstractController
         return $this->redirectToRoute('sortie_index');
     }
 
-    #[Route('/sortie/create', name: 'create',  methods: ['POST'])]
-    #[Route('/sortie/{id}/edit', name: 'edit', requirements: ['id'=>'\d+'], methods: ['POST'])]
-    public function createOrEdit(Request $request, EntityManagerInterface $entityManager, Sortie $sortie=null, int $id=0): Response
+    #[Route('/sortie/{id}/create', name: 'create',   requirements: ['id'=>'\d+'],methods: ['POST'])]
+    #[Route('/sortie/{id}/edit', name: 'edit',  requirements: ['id'=>'\d+'],methods: ['POST'])]
+    public function createOrEdit(Request $request, EntityManagerInterface $entityManager, ?Sortie $sortie, int $id=0): Response
     {
         if($sortie === null){
             $titre = 'Créer une sortie';
@@ -176,7 +176,7 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/sortie/{id}/delete', name: 'delete', requirements: ['id'=>'\d+'], methods: ['GET'])]
-    public function delete(Request $request, ?Sortie $sortie, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, ?Sortie $sortie, EntityManagerInterface $entityManager, int $id=0): Response
     {
         if($sortie->isTheOwner($this->getUser()) and $sortie->getStateNb() === EtatEnum::ENCREATION->value){
             // sécurité contre attaques CSRT
