@@ -6,9 +6,11 @@ use App\Repository\ParticipantRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -22,6 +24,8 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 180)]
     private ?string $email = null;
 
     /**
@@ -31,18 +35,24 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private array $roles = [];
 
     /**
-     * @var string The hashed password
+     * @var ?string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank]
     private ?string $password = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 2, max: 50)]
     private ?string $name = null;
 
     #[ORM\Column(length: 30)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 2, max: 30)]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 20, nullable: true)]
+    #[Assert\Length(max: 20)]
     private ?string $phoneNumber = null;
 
     #[ORM\Column]
@@ -65,6 +75,8 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Campus $campus = null;
 
     #[ORM\Column(length: 20)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 3, max: 20)]
     private ?string $pseudo = null;
 
     public function __construct()
@@ -234,17 +246,22 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->sorties;
     }
 
-    public function addSorties(Sortie $sortie): static
+    /**
+     * Attention:
+     * Les contrôles se font sur sortie->addParticipants
+     * @param Sortie $sortie
+     * @return $this
+     */
+    public function addSortie(Sortie $sortie): static
     {
         if (!$this->sorties->contains($sortie)) {
             $this->sorties->add($sortie);
-            $sortie->addParticipant($this);
         }
 
         return $this;
     }
 
-    public function removeSorties(Sortie $sortie): static
+    public function removeSortie(Sortie $sortie): static
     {
         if ($this->sorties->removeElement($sortie)) {
             $sortie->removeParticipant($this);
@@ -272,8 +289,8 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setPseudo(string $pseudo): static
     {
-        $this->pseudo = $pseudo;
-
+            $this->pseudo = $pseudo;
         return $this;
     }
+
 }

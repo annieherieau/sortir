@@ -68,12 +68,12 @@
                         {#                S'INSCRIRE' #}
                         {% if not isRegistred  and s.state.nb == 1
                             and s.participants.count < s.maxRegistrationNumber %}
-                            <a href="#" title="S'inscrire">S'inscrire</a>
+                            <a href="{{ path('participant_sortie_register',{'id': s.id}) }}"  title="S'inscrire">S'inscrire</a>
                         {% endif %}
 
                         {#                PUBLIER/SUPPRIMER #}
                         {% if s.state.nb == 0 %}
-                            <a href="#" title="Modifier">Modifier</a> <a href="#" title="Publier">Publier</a> <a href="#" title="Supprimer">Supprimer</a>
+                            <a href="#" title="Modifier">Modifier</a> <a href="{{ path('sortie_publish',{'id': s.id}) }}" title="Publier">Publier</a> <a href="#" title="Supprimer">Supprimer</a>
                         {% endif %}
 
                         {#                ANNULER #}
