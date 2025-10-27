@@ -8,6 +8,7 @@ use App\Form\SortieFilterType;
 use App\Entity\Etat;
 use App\Entity\Sortie;
 use App\Entity\EtatEnum;
+use App\Form\SortieType;
 use App\Repository\CampusRepository;
 use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
@@ -98,5 +99,58 @@ final class SortieController extends AbstractController
         }
 
         return $this->redirectToRoute('sortie_index');
+    }
+
+    #[Route('/sortie/create', name: 'create', methods: ['POST'])]
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+        $sortie = new Sortie();
+        $sortie->setCampus($user->getCampus());
+        $sortie->setOwner($user);
+        $sortie->setState($this->etats[EtatEnum::ENCREATION->value]);
+
+
+        $sortieForm = $this->createForm(SortieType::class, $sortie);
+        $sortieForm->handleRequest($request);
+        dump($sortieForm);
+
+        if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+            $duration =  strval($sortieForm->get('durationInMunites')->getData());
+            $sortie->setEndingDateWithDurationInMunutes($duration);
+
+//            $publier = $sortieForm->get('publier')->getData();
+//
+//            if($publier){
+//                $sortie->setState($this->etats[EtatEnum::OUVERTE->value]);
+//            }
+
+            try{
+
+                $entityManager->persist($sortie);
+                $entityManager->flush();
+                $message  = 'Votre sortie a été enregistrée';
+
+//                if($publier){
+//                    $this->addFlash('success', $message.' et publiée');
+//                    return $this->redirectToRoute('sortie_publish', ['id' => $sortie->getId()]);
+//                }else{
+                    $this->addFlash('success', $message);
+                    return $this->redirectToRoute('sortie_index');
+//                }
+
+            }catch (\Exception $e){
+                $this->addFlash('danger', $e->getMessage());
+                return $this->redirectToRoute('sortie_create');
+            }
+
+        }
+
+        return $this->render('sortie/create.html.twig', [
+            'titre' => 'Créer une sortie',
+            "sortie" => $sortie,
+            'sortieForm' => $sortieForm->createView(),
+        ]);
+
     }
 }
