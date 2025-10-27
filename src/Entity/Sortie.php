@@ -241,4 +241,9 @@ class Sortie
     {
         return $this->participants->contains($participant);
     }
+
+    public function getStateNb(): ?int
+    {
+        return $this->getState()->getNb();
+    }
 }
