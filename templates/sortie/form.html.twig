@@ -12,7 +12,9 @@
 
     <input type="submit" class="btn btn-primary" value="Enregistrer" id="submit-enregistrer">
     <input type="submit" class="btn btn-dark" value="Publier" id="submit-publier" onclick="publish(event)">
+    <a class="btn btn-outline-btn-danger" href="{{ path('sortie_delete', {'id' : sortie.id}) }}">Supprimer</a>
     <a class="btn btn-outline-primary" href="{{ path('sortie_index') }}">Retour à la liste</a>
+
     {{ form_end(sortieForm) }}
 
     <script type="text/javascript" src="{{ asset('js/sortie-form.js') }}"></script>

@@ -82,9 +82,10 @@ final class SortieController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    #[Route('/sortie/{id}/publish', name: 'publish')]
+    #[Route('/sortie/{id}/publish', name: 'publish', requirements: ['id'=>'\d+'])]
     public function publish(Sortie $sortie, EntityManagerInterface $entityManager): Response
     {
+
         $user = $this->getUser();
         if($sortie->isTheOwner($user) and $sortie->getStateNb() === EtatEnum::ENCREATION->value){
             $state = $this->etats[EtatEnum::OUVERTE->value];
@@ -102,7 +103,7 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/sortie/create', name: 'create',  methods: ['POST'])]
-    #[Route('/sortie/{id}/edit', name: 'edit', methods: ['POST'])]
+    #[Route('/sortie/{id}/edit', name: 'edit', requirements: ['id'=>'\d+'], methods: ['POST'])]
     public function createOrEdit(Request $request, EntityManagerInterface $entityManager, Sortie $sortie=null, int $id=0): Response
     {
         if($sortie === null){
@@ -119,10 +120,10 @@ final class SortieController extends AbstractController
             $titre = 'Modifier la sortie';
 
             // Modification des sortie en création uniquement
-            if($sortie->getStateNb() !== EtatEnum::ENCREATION->value){
+            if($sortie->getStateNb() !== EtatEnum::ENCREATION->value && !$sortie->isTheOwner($this->getUser())){
                 return $this->redirectToRoute('sortie_index');
             }
-            
+
             // durée en minutes à partir de la dateHeure de fin
             $duration = $sortie->getDuration();
             $durationInMinutes = 24*60*$duration->d + 60*$duration->h + $duration->i;
@@ -167,5 +168,27 @@ final class SortieController extends AbstractController
             'sortieForm' => $sortieForm->createView(),
         ]);
 
+    }
+
+    #[Route('/sortie/{id}/delete', name: 'delete', requirements: ['id'=>'\d+'], methods: ['GET'])]
+    public function delete(Request $request, ?Sortie $sortie, EntityManagerInterface $entityManager): Response
+    {
+        if($sortie->isTheOwner($this->getUser()) and $sortie->getStateNb() === EtatEnum::ENCREATION->value){
+            // TODO sécurité contre attaques CSRT
+           // if($this->isCsrfTokenValid('delete-'.$sortie->getId(), $request->get('token'))){
+                try{
+                    $entityManager->remove($sortie);
+                    $entityManager->persist($sortie);
+                    $entityManager->flush();
+                    $this->addFlash('success', "La sortie ".$sortie->getName()." a été supprimée.");
+                }catch (\Exception $e){
+                    $this->addFlash('warning', "La sortie n'a pas pu être supprimée, veuillez contacter l'administrateur");
+                }
+           // }else{
+//                $this->addFlash('danger', 'Attaque CSRT : le sortie n\'a pas pu être supprimée !');
+//            }
+
+        }
+        return $this->redirectToRoute('sortie_index');
     }
 }
