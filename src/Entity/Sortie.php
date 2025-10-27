@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -182,10 +183,19 @@ class Sortie
         return $this->participants;
     }
 
-    public function addParticipant(Participant $participant): static
+    public function addParticipant(Participant $participant, EtatRepository $etatRepository): static
     {
-        if (!$this->participants->contains($participant)) {
+        $now = new \DateTimeImmutable();
+        if (!$this->participants->contains($participant) // n'est pas inscrit
+            && $this->participants->count() < $this->maxRegistrationNumber // reste des places
+            && $this->registerLimitDate > $now) // date limite non atteinte
+        {
             $this->participants->add($participant);
+            $participant->addSortie($this);
+        }
+
+        if($this->participants->count() === $this->maxRegistrationNumber ){
+            $this->setState($this->findEtatbyEnum(EtatEnum::CLOTUREE->value , $etatRepository));
         }
 
         return $this;
@@ -245,5 +255,17 @@ class Sortie
     public function getStateNb(): ?int
     {
         return $this->getState()->getNb();
+    }
+
+
+    /**
+     * Permet de charger l'état désiré via le numero.
+     * @param int $etatNb // EtatEnum::ETATNAME->value
+     * @param EtatRepository $etatRepository
+     * @return Etat|null
+     */
+    public function findEtatbyEnum(int $etatNb, EtatRepository $etatRepository): ?Etat
+    {
+        return $etatRepository->findOneBy(['nb' => $etatNb]);
     }
 }
