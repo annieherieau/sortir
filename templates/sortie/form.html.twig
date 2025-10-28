@@ -89,11 +89,20 @@
     <script src="{{ asset('js/sortie-form.js') }}" type="text/javascript">
     </script>
     <script type="text/javascript">
+        // Evenement sur le select Lieu
+        // affichage des détails du lieu
         let lieux = {{ lieux | json_encode |raw }};
-        let selectelement = document.getElementById('sortie_lieu');
-        console.log(selectelement);
-        selectelement.addEventListener("change", function(){
+        let sortie_lieu = document.getElementById('sortie_lieu');
+        sortie_lieu.addEventListener("change", function(){
             handleLieuInfos(lieux)
+        });
+
+        // Evenement sur la date de début de la sortie
+        // date début = max de la date limit d'inscription
+        let startingDate = document.getElementById('sortie_startingDate');
+        setMaxLimitDate(startingDate);
+        startingDate.addEventListener("change", function() {
+            setMaxLimitDate(startingDate)
         });
     </script>
 {% endblock %}

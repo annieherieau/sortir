@@ -28,6 +28,7 @@ class SortieType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $minDateTime = (new \DateTime())->modify('+1 hour')->format("Y-m-d H:i");
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Nom de la sortie'
@@ -35,10 +36,12 @@ class SortieType extends AbstractType
             ->add('startingDate', DateTimeType::class, [
                 'label' => 'Date et Heure de la sortie',
                 'widget' => 'single_text',
+                'attr' => ['min' => $minDateTime],
             ])
             ->add('registerLimitDate', DateTimeType::class, [
                 'label' => "Date limite d'inscription",
-                'widget' => 'single_text'
+                'widget' => 'single_text',
+                'attr' => ['min' => $minDateTime],
             ])
             ->add('maxRegistrationNumber', IntegerType::class,
                 ['label' => 'Nombre de places',
@@ -93,6 +96,7 @@ class SortieType extends AbstractType
                 "mapped" => false,
             ])
         ;
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -101,4 +105,5 @@ class SortieType extends AbstractType
             'data_class' => Sortie::class,
         ]);
     }
+
 }

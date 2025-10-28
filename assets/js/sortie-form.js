@@ -16,14 +16,19 @@ function publish(e){
 }
 
 /**
- * Permet de vérifier la cohérence des dates
+ * Permet définir la limite maximum de la date limite d'inscription
+ * date limite < date début
+ * @param startingDate
  */
-function validateDates(e){
-    e.preventDefault();
-    let form = document.forms['sortie'];
-    // TODO validation des dates
+function setMaxLimitDate(startingDate){
+    let dateLmite = document.getElementById('sortie_registerLimitDate').value;
+    dateLmite.setAttribute('max', (dateLmite).replace('T', ' '));
 }
 
+/**
+ * mise à jour des informations du lieu sélectionné
+ * @param lieux
+ */
 function handleLieuInfos(lieux){
 
     let lieuId = document.getElementById('sortie_lieu').value;
