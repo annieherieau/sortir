@@ -9,6 +9,7 @@ use App\Entity\Sortie;
 use App\Form\ParticipantType;
 use App\Form\UpdatePasswordType;
 use App\Repository\EtatRepository;
+use App\Repository\ParticipantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -109,6 +110,16 @@ final class ParticipantController extends AbstractController
         return $this->render('participant/myprofile.html.twig', [
             'form' => $form,
             'pwdForm' => $pwdForm,
+        ]);
+    }
+
+    #[Route('/{id}/profile', name: 'profile', requirements: ['id'=>'\d+'])]
+    public function detail_profile(int $id, ParticipantRepository $participantRepository): Response{
+
+        $participant = $participantRepository->findOneBy(['id' => $id]);
+
+        return $this->render('participant/profile.html.twig', [
+            'participant' => $participant,
         ]);
     }
 
