@@ -122,7 +122,9 @@
 
                         {#                PUBLIER/SUPPRIMER #}
                         {% if s.state.nb == 0 %}
-                            <a href="#" title="Modifier">Modifier</a> <a href="{{ path('sortie_publish',{'id': s.id}) }}" title="Publier">Publier</a> <a href="#" title="Supprimer">Supprimer</a>
+                            <a href="{{ path('sortie_edit',{'id': s.id}) }}" title="Modifier">Modifier</a>
+                            <a href="{{ path('sortie_publish',{'id': s.id}) }}" title="Publier">Publier</a>
+                            <a href="{{ path('sortie_delete', {'id' : s.id, 'token' : csrf_token('delete-'~s.id)})}}" title="Supprimer">Supprimer</a>
                         {% endif %}
 
                         {#                ANNULER #}

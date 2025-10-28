@@ -6,13 +6,17 @@
 
 {% block main %}
     <h2>{{ titre }}</h2>
-    {{ form_start(sortieForm) }}
+    {{ form_start(sortieForm, {'attr' : {'onsubmit' : 'validateDates()'}}) }}
 
     {{ form_widget(sortieForm) }}
 
     <input type="submit" class="btn btn-primary" value="Enregistrer" id="submit-enregistrer">
-{#    <input type="submit" class="btn btn-dark" value="Publier" id="submit-publier">#}
+    <input type="submit" class="btn btn-primary" value="Publier" id="submit-publier" onclick="publish(event)">
+    {% if sortie.id != 0 %}
+    <a class="btn btn-danger" href="{{ path('sortie_delete', {'id' : sortie.id, 'token' : csrf_token('delete-'~sortie.id)}) }}">Supprimer</a>
+    {% endif %}
     <a class="btn btn-outline-primary" href="{{ path('sortie_index') }}">Retour à la liste</a>
+
     {{ form_end(sortieForm) }}
 
     <script type="text/javascript" src="{{ asset('js/sortie-form.js') }}"></script>

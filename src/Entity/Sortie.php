@@ -272,6 +272,11 @@ class Sortie
         return $etatRepository->findOneBy(['nb' => $etatNb]);
     }
 
+    /**
+     * Permet de calculer la dateHeure de fin en ajoutant la durée en minute
+     * @param int $minutes
+     * @return $this
+     */
     public function setEndingDateWithDurationInMunutes(int $minutes): static
     {
         $this->endingDate = $this->startingDate->modify('+'.$minutes.' minutes');
