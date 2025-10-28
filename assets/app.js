@@ -9,3 +9,19 @@ import './bootstrap.js';
   import 'bootstrap/dist/css/bootstrap.min.css';  // Déclaration du CSS de Bootstrap
   import './styles/app.css';
   console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+
+function publish(e){
+    e.preventDefault();
+    let form = document.forms['sortie']
+    let publier = form.elements['sortie_publier'];
+    publier.checked = true;
+    form.submit();
+}
+
+function validateDates(){
+    event.preventDefault();
+    let form = document.forms['sortie'];
+    // TODO validation des dates
+    form.submit();
+
+}
