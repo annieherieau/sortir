@@ -58,9 +58,12 @@ class SortieType extends AbstractType
                 'label' => 'Lieu',
                 'class' => Lieu::class,
                 'choice_label' => 'name',
+                'placeholder' => '--Choisir un lieu--',
                 'query_builder' => function (EntityRepository $repo) {
-                    return $repo->createQueryBuilder('l')->orderBy('l.name', 'ASC');
-                }
+                    return $repo->createQueryBuilder('l')
+                        ->join('l.ville', 'v')
+                        ->orderBy('l.name', 'ASC');
+                },
             ])
             ->add('description', TextareaType::class,
                 ['label' => 'Description et informations',

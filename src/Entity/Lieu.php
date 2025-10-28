@@ -136,4 +136,22 @@ class Lieu
 
         return $this;
     }
+
+    /**
+     * Renvoie les coordonnées du lieux
+     * @return string
+     */
+    public function getCoordToString(): string
+    {
+        $str = '... / ...';
+        if($this->latitude && $this->longitude){
+            $str = 'lat : '.$this->latitude.' / lon : '.$this->longitude;
+        }
+        return $str;
+    }
+
+    public function getCodeAndVille() :string
+    {
+        return $this->getVille()->getPostalCode(). ' - ' . mb_strtoupper($this->getVille()->getName());
+    }
 }

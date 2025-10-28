@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 
+use App\Entity\Lieu;
 use App\Form\SortieFilterType;
 use App\Entity\Etat;
 use App\Entity\Sortie;
@@ -107,10 +108,20 @@ final class SortieController extends AbstractController
         return $this->redirectToRoute('sortie_index');
     }
 
+    /**
+     * Créer une nouvelle sortie ou modifier une sortie existante
+     * Modification par l'organisateur des sortie en statut ENCREATION
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @param Sortie|null $sortie
+     * @param int $id
+     * @return Response
+     */
     #[Route('/sortie/{id}/create', name: 'create',   requirements: ['id'=>'\d+'],methods: ['POST'])]
     #[Route('/sortie/{id}/edit', name: 'edit',  requirements: ['id'=>'\d+'],methods: ['POST'])]
     public function createOrEdit(Request $request, EntityManagerInterface $entityManager, ?Sortie $sortie, int $id=0): Response
     {
+        $lieux = $entityManager->getRepository(Lieu::class)->findAll();
         if($sortie === null){
             $titre = 'Créer une sortie';
             $sortie = new Sortie();
@@ -147,7 +158,7 @@ final class SortieController extends AbstractController
             $duration =  strval($sortieForm->get('durationInMunites')->getData());
             $sortie->setEndingDateWithDurationInMunutes($duration);
 
-            // vérifier si la sortie doit être publiée
+            // Soumission par la bouton "Publier"
             $publier = $sortieForm->get('publier')->getData();
             if($publier){
                 $sortie->setState($this->etats[EtatEnum::OUVERTE->value]);
@@ -160,6 +171,7 @@ final class SortieController extends AbstractController
 
                 $this->addFlash('success', 'Votre sortie a été enregistrée'.($publier ? ' et publiée' :''));
                 return $this->redirectToRoute('sortie_index');
+
             }catch (\Exception $e){
                 $this->addFlash('danger', $e->getMessage());
                 return $this->redirectToRoute('sortie_edit', ['id' => $sortie->getId()]);
@@ -171,6 +183,7 @@ final class SortieController extends AbstractController
             'titre' => $titre,
             "sortie" => $sortie,
             'sortieForm' => $sortieForm->createView(),
+            'lieux' => $lieux
         ]);
 
     }
