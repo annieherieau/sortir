@@ -20,7 +20,7 @@ class Sortie
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Assert\length(max: 255)]
+    #[Assert\Length(max: 255)]
     private ?string $name = null;
 
     #[ORM\Column]
@@ -37,7 +37,7 @@ class Sortie
     private ?int $maxRegistrationNumber = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\length(max: 255)]
+    #[Assert\Length(max: 255)]
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
