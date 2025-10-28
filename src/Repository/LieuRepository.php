@@ -22,6 +22,7 @@ class LieuRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
     //    /**
     //     * @return Lieu[] Returns an array of Lieu objects
     //     */

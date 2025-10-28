@@ -22,3 +22,7 @@ body {
     content: "* ";
     position: relative;
 }
+
+.standard label{
+    font-weight: bold;
+}

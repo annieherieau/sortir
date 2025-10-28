@@ -19,6 +19,8 @@ class Sortie
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $name = null;
 
     #[ORM\Column]
@@ -35,7 +37,7 @@ class Sortie
     private ?int $maxRegistrationNumber = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\length(max: 255)]
+    #[Assert\Length(max: 255)]
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
@@ -186,6 +188,7 @@ class Sortie
         return $this->participants;
     }
 
+    // TODO basculer les vérifications dans un SortieManager, car ce n'est pas compatible avec les fixtures
     public function addParticipant(Participant $participant, EtatRepository $etatRepository): static
     {
         $now = new \DateTimeImmutable();
