@@ -26,10 +26,15 @@ function validateDates(e){
 
 function handleLieuInfos(lieux){
 
-    let lieu_s = document.getElementById('sortie_lieu');
-    let lieu_id = lieu_s.value;
-    console.log(lieux);
+    let lieuId = document.getElementById('sortie_lieu').value;
 
+    let street = document.getElementById('street');
+    let codeAndVille = document.getElementById('codeAndVille');
+    let coordToString = document.getElementById('coordToString');
+
+    street.value = lieux[lieuId]['street'];
+    codeAndVille.value = lieux[lieuId]['codeAndVille'];
+    coordToString.value = lieux[lieuId]['coordToString'];
 }
 
 

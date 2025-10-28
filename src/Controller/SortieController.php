@@ -121,7 +121,14 @@ final class SortieController extends AbstractController
     #[Route('/sortie/{id}/edit', name: 'edit',  requirements: ['id'=>'\d+'],methods: ['POST'])]
     public function createOrEdit(Request $request, EntityManagerInterface $entityManager, ?Sortie $sortie, int $id=0): Response
     {
-        $lieux = $entityManager->getRepository(Lieu::class)->findAll();
+        $lieuxList = $entityManager->getRepository(Lieu::class)->findAll();
+        $lieux = [];
+        foreach ($lieuxList as $lieu) {
+            $lieux[$lieu->getId()] = [
+                'street' => $lieu->getStreet(),
+                'codeAndVille' => $lieu->getCodeAndVille(),
+                'coordToString' => $lieu->getCoordToString()];
+        }
         if($sortie === null){
             $titre = 'Créer une sortie';
             $sortie = new Sortie();

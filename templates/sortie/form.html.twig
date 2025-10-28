@@ -53,13 +53,13 @@
                        value="{{ sortie.lieu ? sortie.lieu.street : '' }}" disabled/>
             </div>
             <div class="mt-3">
-                <label for="cp" class="form-label">Code postal - VILLE</label>
-                <input type="text" name="cp" id="cp" class="form-control-plaintext"
+                <label for="codeAndVille" class="form-label">Code postal - VILLE</label>
+                <input type="text" name="codeAndVille" id="codeAndVille" class="form-control-plaintext"
                        value="{{ sortie.lieu ? sortie.lieu.codeAndVille: '' }}" disabled/>
             </div>
             <div class="mt-3">
-                <label for="lat-lon" class="form-label">Latitude / Longitude</label>
-                <input type="text" name="lat-lon" id="lat-lon" class="form-control-plaintext"
+                <label for="coordToString" class="form-label">Latitude / Longitude</label>
+                <input type="text" name="coordToString" id="coordToString" class="form-control-plaintext"
                        value="{{ sortie.lieu ? sortie.lieu.getCoordToString : ''}}" disabled/>
             </div>
 
@@ -85,20 +85,16 @@
     </fieldset>
     {{ form_end(sortieForm) }}
 
-    <ul>
-        {% for l in lieux %}
-            <li>{{ l.name }}</li>
-        {% endfor %}
-    </ul>
-
-
 
     <script src="{{ asset('js/sortie-form.js') }}" type="text/javascript">
     </script>
     <script type="text/javascript">
-        let lieux = {{ lieux | json_encode | raw }};
+        let lieux = {{ lieux | json_encode |raw }};
         let selectelement = document.getElementById('sortie_lieu');
         console.log(selectelement);
-        selectelement.addEventListener("change",handleLieuInfos(lieux))
+        selectelement.addEventListener("change", function(){
+            handleLieuInfos(lieux)
+        });
+    </script>
 {% endblock %}
 
