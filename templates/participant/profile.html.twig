@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <div class="d-flex flex-row justify-content-center align-items-center  mt-5">
+        <div class="me-5">
+            <img class="" src="{{ asset('img/user-placeholder.jpg') }}" alt="logo" height="100">
+        </div>
+        <div class="d-flex flex-row justify-content-evenly m-5">
+            <div class="d-flex flex-column">
+                <p class="d-inline-flex">
+                    <span class=" pe-2"><strong> Campus: </strong> </span>
+                    <span> {{ participant.campus.name }} </span>
+                </p>
+                <p class="d-inline-flex">
+                    <span class=" pe-2"><strong> Prénom: </strong> </span>
+                    <span> {{ participant.firstName }} </span>
+                </p>
+                <p class="d-inline-flex">
+                    <span class=" pe-2"><strong> Nom: </strong> </span>
+                    <span> {{ participant.name }} </span>
+                </p>
+                <p class="d-inline-flex">
+                    <span class=" pe-2"><strong> Téléphone: </strong> </span>
+                    <span> {{ participant.phoneNumber | default('')  }} </span>
+                </p>
+                <p class="d-inline-flex">
+                    <span class=" pe-2"><strong> Email: </strong> </span>
+                    <span> {{ participant.email }} </span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
