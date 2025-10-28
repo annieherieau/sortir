@@ -25,6 +25,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {{ currentPath == 'sortie_create' ? 'active' : '' }}" href="{{ path('sortie_create') }}"
+                           title="Créer une sortie">
+                            Créer une sortie
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {{ currentPath == 'participant_myprofile' ? 'active' : '' }}" href="{{ path('participant_myprofile') }}"
                            title="Gérer mon profil">
                             Mon profil

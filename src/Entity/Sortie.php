@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
@@ -30,9 +31,11 @@ class Sortie
     private ?\DateTimeImmutable $registerLimitDate = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Assert\GreaterThan(0)]
     private ?int $maxRegistrationNumber = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\length(max: 255)]
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
@@ -267,5 +270,11 @@ class Sortie
     public function findEtatbyEnum(int $etatNb, EtatRepository $etatRepository): ?Etat
     {
         return $etatRepository->findOneBy(['nb' => $etatNb]);
+    }
+
+    public function setEndingDateWithDurationInMunutes(int $minutes): static
+    {
+        $this->endingDate = $this->startingDate->modify('+'.$minutes.' minutes');
+        return $this;
     }
 }
