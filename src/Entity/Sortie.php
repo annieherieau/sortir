@@ -257,6 +257,11 @@ class Sortie
         return $this->getState()->getNb();
     }
 
+    public function getStateLibelle(): ?string
+    {
+        return $this->getState()->getLibelle();
+    }
+
 
     /**
      * Permet de charger l'état désiré via le numero.
