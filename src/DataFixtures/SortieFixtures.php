@@ -44,7 +44,6 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
 
             $campus = $owner->getCampus();
             $sortie->setCampus($campus);
-            $sortie->addParticipant($owner);
 
             $stateRandom= random_int(0,1);
             $maxRandom = random_int(1, $maxRegistered-1);
@@ -126,7 +125,6 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
 
             $campus = $owner->getCampus();
             $sortie->setCampus($campus);
-            $sortie->addParticipant($owner);
 
             $maxRandom = random_int(1, $maxRegistered-1);
             while( $sortie->getParticipants()->count() < $maxRandom){
@@ -154,7 +152,6 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
 
             $campus = $owner->getCampus();
             $sortie->setCampus($campus);
-            $sortie->addParticipant($owner);
 
             $maxRandom = random_int(1, $maxRegistered-1);
             $sortie->setState($etats[5]);
@@ -184,7 +181,6 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
 
             $campus = $owner->getCampus();
             $sortie->setCampus($campus);
-            $sortie->addParticipant($owner);
 
             $maxRandom = random_int(1, $maxRegistered-1);
             $sortie->setState($etats[random_int(5,6)]);
