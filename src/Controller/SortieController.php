@@ -203,7 +203,6 @@ final class SortieController extends AbstractController
             if($this->isCsrfTokenValid('delete-'.$sortie->getId(), $request->get('token'))){
                 try{
                     $entityManager->remove($sortie);
-                    $entityManager->persist($sortie);
                     $entityManager->flush();
                     $this->addFlash('success', "La sortie ".$sortie->getName()." a été supprimée.");
                 }catch (\Exception $e){
