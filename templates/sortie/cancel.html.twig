@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Annuler une sortie
+{% endblock %}
+
+{% block main %}
+    <h2>Annuler une sortie</h2>
+    {{ form_start(cancelForm, {'attr' : {'class' : 'standard'}}) }}
+    <fieldset class="border p-3 mb-3 row">
+        <div class="row">
+            <div class="col-sm-3"><strong>Nom de la sortie</strong></div>
+            <div class="col-sm-9">{{ sortie.name }}</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3"><strong>Date Heure de début</strong></div>
+            <div class="col-sm-9">{{ sortie.startingDate | date('d/m/Y h:i')}}</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3"><strong>Campus</strong></div>
+            <div class="col-sm-9">{{ sortie.campus.name }}</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3"><strong>Lieu</strong></div>
+            <div class="col-sm-9">{{ sortie.lieu.name }}</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3"><strong>Ville</strong></div>
+            <div class="col-sm-9">{{ sortie.lieu.codeAndVille }}</div>
+        </div>
+
+        <div class="mt-3">
+            {{ form_label(cancelForm.cancelMemo) }}
+            {{ form_widget(cancelForm.cancelMemo) }}
+            {{ form_errors(cancelForm.cancelMemo) }}
+        </div>
+        <div class="mt-3">
+            <input type="submit" class="btn btn-primary" value="Enregistrer" id="submit-enregistrer">
+            <a class="btn btn-outline-primary" href="{{ path('sortie_index') }}">Retour à la liste</a>
+        </div>
+    </fieldset>
+    {{ form_end(cancelForm) }}
+
+{% endblock %}
+

@@ -62,6 +62,12 @@ class Sortie
     #[ORM\JoinColumn(nullable: false)]
     private ?Etat $state = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
+    private ?string $cancelMemo = null;
+
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -251,6 +257,11 @@ class Sortie
         return $this->getState()->getNb();
     }
 
+    public function getStateLibelle(): ?string
+    {
+        return $this->getState()->getLibelle();
+    }
+
 
     /**
      * Permet de charger l'état désiré via le numero.
@@ -273,4 +284,36 @@ class Sortie
         $this->endingDate = $this->startingDate->modify('+'.$minutes.' minutes');
         return $this;
     }
+
+    /**
+     * Renvoie si la sortie peut être annulée
+     * @return bool
+     */
+    public function isCancellable(): bool
+    {
+        return ($this->getStateNb() === EtatEnum::OUVERTE->value || $this->getStateNb() === EtatEnum::CLOTUREE->value)
+            && $this->getStartingDate() > new \DateTimeImmutable();
+    }
+
+    /**
+     * Renvoie si la sortie est en création (brouillon)
+     * @return bool
+     */
+    public function isDraft(): bool
+    {
+        return $this->getStateNb() === EtatEnum::ENCREATION->value;
+    }
+
+    public function getCancelMemo(): ?string
+    {
+        return $this->cancelMemo;
+    }
+
+    public function setCancelMemo(?string $cancelMemo): static
+    {
+        $this->cancelMemo = $cancelMemo;
+
+        return $this;
+    }
+
 }

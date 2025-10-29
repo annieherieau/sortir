@@ -6,7 +6,9 @@
     {% if app.user %}
         <div class="card w-25 card-body flex float-end">
             <div><strong>Date du jour :</strong> {{ 'now' | date('d/m/Y') }}<br>
-                <strong>Participant :</strong> {{ app.user.pseudo }}</div>
+                <strong>Participant :</strong> {{ app.user.pseudo }}<br>
+                <strong>Campus :</strong> {{ app.user.campus.name }}
+            </div>
         </div>
     {% endif %}
 
@@ -17,15 +19,13 @@
             {{ form_start(sortieFiltersForm) }}
             <div class="d-flex justify-content-start align-items-center pb-2">
                 <div class="w-50">
-                    <div class="w-auto">
-                            {{ form_label(sortieFiltersForm.campus) }}
-                            <select id="sortie_filter_campus" name="{{ field_name(sortieFiltersForm.campus) }}">
-                                {% for c in campusList %}
-                                    {% set selected = c == campus ? 'selected' : '' %}
-                                    <option value="{{ c.id }}" {{ selected }}>{{ c.name }}</option>
-                                {% endfor %}
-                            </select>
+                    <div class="d-flex w-100 flex-row pb-2 align-items-center justify-content-start">
+                        <label for="sortie_filter_campus" class="w-auto h-auto p-1">
+                            Campus
+                        </label>
+                        {{ form_widget(sortieFiltersForm.campus) }}
                     </div>
+
 
                     <div class="d-flex w-100 flex-row pb-2 align-items-center justify-content-start">
                          <label for="sortie_filter_sortieName" class="w-auto h-auto p-1">
@@ -74,6 +74,7 @@
     <table class="table table-light table-bordered border-black">
         <thead class="">
         <tr class="table-dark">
+
             <th>Nom de la sortie</th>
             <th>Date de la sortie</th>
             <th>Clôture</th>
@@ -81,6 +82,7 @@
             <th>Etat</th>
             <th>Inscrit(e)</th>
             <th>Organisateur</th>
+            <th>Campus</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -94,7 +96,6 @@
 
             {% if visible %}
                 <tr>
-
                     <td>{{ s.name }}</td>
                     <td>{{ s.startingDate | date ('d/m/Y h:i') }}
                     </td>
@@ -109,6 +110,7 @@
                             <a href="{{ path('participant_profile', {'id':s.owner.id}) }}" title="Afficher le profil">{{ s.owner.pseudo }} </a>
                         {% endif %}
                     </td>
+                    <td>{{ s.campus.name }}</td>
                     <td>
                         <a href="{{ path('sortie_detail',{'id':s.id}) }}" title="Afficher les détails de la sortie">Afficher</a>
 
@@ -122,16 +124,16 @@
                             <a href="{{ path('participant_sortie_register',{'id': s.id}) }}"  title="S'inscrire">S'inscrire</a>
                         {% endif %}
 
-                        {#                PUBLIER/SUPPRIMER #}
-                        {% if s.state.nb == 0 %}
+                        {#                MODIFIER/PUBLIER/SUPPRIMER #}
+                        {% if s.draft %}
                             <a href="{{ path('sortie_edit',{'id': s.id}) }}" title="Modifier">Modifier</a>
                             <a href="{{ path('sortie_publish',{'id': s.id}) }}" title="Publier">Publier</a>
                             <a href="{{ path('sortie_delete', {'id' : s.id, 'token' : csrf_token('delete-'~s.id)})}}" title="Supprimer">Supprimer</a>
                         {% endif %}
 
                         {#                ANNULER #}
-                        {% if (s.state.nb > 0 and s.state.nb < 3) and ( is_granted('ROLE_ADMIN') or isTheOwner ) %}
-                            <a href="#" title="Annuler la sortie">Annuler</a>
+                        {% if (s.cancellable) and ( is_granted('ROLE_ADMIN') or isTheOwner ) %}
+                            <a href="{{ path('sortie_cancel', {'id' : s.id })}}"  title="Annuler la sortie">Annuler</a>
                         {% endif %}
                     </td>
                 </tr>

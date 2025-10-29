@@ -52,12 +52,26 @@
             {% if sortie.lieu.latitude and sortie.lieu.longitude %}
                 <p class="d-inline-flex">
                     <span class=" pe-2"><strong> Latitude / Longitude: </strong> </span>
-                    <span> </span>
+                    <span>{{ sortie.lieu.coordToString}}</span>
                 </p>
             {% endif %}
         </div>
     </div>
-    <div class="d-inline-flex justify-content-center my-2">
+
+    <div class="mt-2">
+        <p>
+            <span class=" pe-2"><strong> Etat: </strong> </span>
+            <span> {{ sortie.stateLibelle }} </span>
+        </p>
+        {% if sortie.stateNb == 5 %}
+            <p>
+                <span class=" pe-2"><strong> Motif d'annulation : </strong> </span>
+                <span>{{ sortie.cancelMemo }}</span>
+            </p>
+        {% endif %}
+    </div>
+
+    <div class="mt-2">
         <p>
             <span class=" pe-2"><strong> Description: </strong> </span>
             <span> {{ sortie.description }} </span>
