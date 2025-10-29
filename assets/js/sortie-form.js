@@ -18,11 +18,16 @@ function publish(e){
 /**
  * Permet définir la limite maximum de la date limite d'inscription
  * date limite < date début
- * @param startingDate
+ * @param startingDateElement
  */
-function setMaxLimitDate(startingDate){
-    let dateLmite = document.getElementById('sortie_registerLimitDate').value;
-    dateLmite.setAttribute('max', (dateLmite).replace('T', ' '));
+function setMaxLimitDate(startingDateElement){
+    let maxDate = startingDateElement.value;
+    console.log(maxDate);
+    if(maxDate)
+    {
+        let dateLmiteElement = document.getElementById('sortie_registerLimitDate');
+        dateLmiteElement.setAttribute('max', (maxDate).replace('T', ' '));
+    }
 }
 
 /**

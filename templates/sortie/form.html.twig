@@ -71,6 +71,7 @@
             {#            Champs cachés #}
             {{ form_widget(sortieForm.owner) }}
             {{ form_widget(sortieForm.state) }}
+{#            {{ form_widget(sortieForm.publier) }}#}
         </div>
 
         <div class="mt-3">
@@ -99,10 +100,10 @@
 
         // Evenement sur la date de début de la sortie
         // date début = max de la date limit d'inscription
-        let startingDate = document.getElementById('sortie_startingDate');
-        setMaxLimitDate(startingDate);
-        startingDate.addEventListener("change", function() {
-            setMaxLimitDate(startingDate)
+        let startingDateElement = document.getElementById('sortie_startingDate');
+        setMaxLimitDate(startingDateElement);
+        startingDateElement.addEventListener("change", function() {
+            setMaxLimitDate(startingDateElement)
         });
     </script>
 {% endblock %}
