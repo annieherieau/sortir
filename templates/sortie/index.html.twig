@@ -65,7 +65,7 @@
                         {{ form_label(sortieFiltersForm.isFinishedSortie) }}
                     </span>
                 </div>
-                <button type="submit"> Rechercher </button>
+                <button class='btn btn-primary' type="submit"> Rechercher </button>
             </div>
 
             {{ form_end(sortieFiltersForm) }}
@@ -95,7 +95,7 @@
             {% if visible %}
                 <tr>
                     <td>{{ s.name }}</td>
-                    <td>{{ s.startingDate | date ('d/m/Y h:i') }}
+                    <td>{{ s.startingDate | date ('d/m/Y H:i') }}
                     </td>
                     <td>{{ s.registerLimitDate | date ('d/m/Y') }}</td>
                     <td>{{ s.participants.count }}/{{ s.maxRegistrationNumber }}</td>
