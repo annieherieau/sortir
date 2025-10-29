@@ -51,6 +51,7 @@ final class SortieController extends AbstractController
         $sortiesList = $this->sortiesList;
         $filters = new SortiesFilter();
         $sortieFiltersForm = $this->createForm(SortieFilterType::class, $filters);
+        $sortieFiltersForm->get('campus')->setData($campus);
         $sortieFiltersForm->handleRequest($request);
 
         if ($sortieFiltersForm->isSubmitted()) {
