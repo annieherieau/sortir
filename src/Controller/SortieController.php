@@ -88,6 +88,7 @@ final class SortieController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
+    // TODO sécurité contre attaques CSRT
     #[Route('/sortie/{id}/publish', name: 'publish', requirements: ['id'=>'\d+'])]
     public function publish(Sortie $sortie, EntityManagerInterface $entityManager): Response
     {
@@ -143,7 +144,7 @@ final class SortieController extends AbstractController
             $titre = 'Modifier la sortie';
 
             // Modification des sortie en création uniquement
-            if($sortie->getStateNb() !== EtatEnum::ENCREATION->value && !$sortie->isTheOwner($this->getUser())){
+            if(!$sortie->isDraft() && !$sortie->isTheOwner($this->getUser())){
                 return $this->redirectToRoute('sortie_index');
             }
 
@@ -198,7 +199,7 @@ final class SortieController extends AbstractController
     #[Route('/sortie/{id}/delete', name: 'delete', requirements: ['id'=>'\d+'], methods: ['GET'])]
     public function delete(Request $request, ?Sortie $sortie, EntityManagerInterface $entityManager, int $id=0): Response
     {
-        if($sortie->isTheOwner($this->getUser()) and $sortie->getStateNb() === EtatEnum::ENCREATION->value){
+        if($sortie->isTheOwner($this->getUser()) and $sortie->isDraft()){
             // sécurité contre attaques CSRT
             if($this->isCsrfTokenValid('delete-'.$sortie->getId(), $request->get('token'))){
                 try{
@@ -211,6 +212,29 @@ final class SortieController extends AbstractController
                 }
             }else{
                 $this->addFlash('danger', 'Attaque CSRT : le sortie n\'a pas pu être supprimée !');
+            }
+
+        }
+        return $this->redirectToRoute('sortie_index');
+    }
+
+    #[Route('/sortie/{id}/cancel', name: 'cancel', requirements: ['id'=>'\d+'], methods: ['GET'])]
+    public function cancel(Request $request, Sortie $sortie, EntityManagerInterface $entityManager): Response
+    {
+        if( ($sortie->isTheOwner($this->getUser()) or $this->isGranted('ROLE_ADMIN'))
+            and $sortie->isCancellable()){
+            // sécurité contre attaques CSRT
+            if($this->isCsrfTokenValid('cancel-'.$sortie->getId(), $request->get('token'))){
+                try{
+                    $sortie->setState($this->etats[EtatEnum::ANNULEE->value]);
+                    $entityManager->persist($sortie);
+                    $entityManager->flush();
+                    $this->addFlash('success', "La sortie ".$sortie->getName()." a été annulée.");
+                }catch (\Exception $e){
+                    $this->addFlash('warning', "La sortie n'a pas pu être annulée, veuillez contacter l'administrateur");
+                }
+            }else{
+                $this->addFlash('danger', 'Attaque CSRT : le sortie n\'a pas pu être annulée !');
             }
 
         }

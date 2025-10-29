@@ -285,4 +285,23 @@ class Sortie
         $this->endingDate = $this->startingDate->modify('+'.$minutes.' minutes');
         return $this;
     }
+
+    /**
+     * Renvoie si la sortie peut être annulée
+     * @return bool
+     */
+    public function isCancellable(): bool
+    {
+        return $this->getStateNb() === EtatEnum::OUVERTE->value || $this->getStateNb() === EtatEnum::CLOTUREE->value;
+    }
+
+    /**
+     * Renvoie si la sortie est en création (brouillon)
+     * @return bool
+     */
+    public function isDraft(): bool
+    {
+        return $this->getStateNb() === EtatEnum::ENCREATION->value;
+    }
+
 }
