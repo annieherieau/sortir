@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Campus;
 use App\Entity\Sortie;
 use App\Utils\SortiesFilter;
+use Doctrine\DBAL\Types\IntegerType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -32,14 +33,16 @@ class SortieFilterType extends AbstractType
             ->add('minStartDate', DateType::class, [
                 'widget' => 'single_text',
                 'label' => 'Entre ',
-                'empty_data' => '01/01/1970',
+               // 'empty_data' => '01/01/1970',
                 'required' => false,
+                'mapped' => false,
             ])
             ->add('maxStartDate', DateType::class, [
                 'widget' => 'single_text',
                 'label' => 'et ',
-                'empty_data' => '01/01/3000',
+              //  'empty_data' => '01/01/3000',
                 'required' => false,
+                'mapped' => false,
             ])
             ->add('isOwner', CheckboxType::class, [
                 'label' => 'Sorties dont je suis l\'organisateur/trice',

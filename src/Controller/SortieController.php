@@ -50,19 +50,33 @@ final class SortieController extends AbstractController
         $campus = $user->getCampus();
         $sortiesList = $this->sortiesList;
         $filters = new SortiesFilter();
+        $filters->setCampus($campus);
+
         $sortieFiltersForm = $this->createForm(SortieFilterType::class, $filters);
+
         $sortieFiltersForm->handleRequest($request);
+        $selectedCampus = $campus;
 
         if ($sortieFiltersForm->isSubmitted()) {
-            $selectedCampus = $sortieFiltersForm->getData()->getCampus();
-            $filteredList = [];
-            foreach ($sortiesList as $sortie) {
-                if ($filters->filterSortie($sortie, $user, $selectedCampus)) {
-                    $filteredList[] = $sortie;
-                }
+            $selectedCampus = $sortieFiltersForm->getData()->getCampus() ?? $campus;
+            $minStartDate = $sortieFiltersForm->get('minStartDate')->getData();
+            if($minStartDate){
+                $filters->setMinStartDate($minStartDate);
             }
-            $sortiesList = $filteredList;
+            $maxStartDate = $sortieFiltersForm->get('maxStartDate')->getData();
+            if($maxStartDate){
+                $filters->setMaxStartDate($maxStartDate);
+            }
+
         }
+
+        $filteredList = [];
+        foreach ($sortiesList as $sortie) {
+            if ($filters->filterSortie($sortie, $user, $selectedCampus)) {
+                $filteredList[] = $sortie;
+            }
+        }
+        $sortiesList = $filteredList;
         return $this->render('sortie/index.html.twig', [
             'campusList' => $this->campusList,
             'campus' => $campus,

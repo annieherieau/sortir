@@ -10,16 +10,18 @@ use DateTime;
 class SortiesFilter
 {
     private Campus $campus;
-    private string $sortieName;
+    private ?string $sortieName ='';
     private ?DateTime $minStartDate = null;
     private ?DateTime $maxStartDate = null;
-    private bool $isOwner;
-    private bool $isRegisteredUser;
-    private bool $isNotRegisteredUser;
-    private bool $isFinishedSortie;
+    private ?bool $isOwner = null;
+    private ?bool $isRegisteredUser = null;
+    private ?bool $isNotRegisteredUser= null;
+    private ?bool $isFinishedSortie = null;
 
     public function __construct()
     {
+        $this->minStartDate = new DateTime('1970-01-01');
+        $this->maxStartDate = new DateTime('3000-01-01');
     }
 
     public function filterSortie(Sortie $sortie, Participant $user, Campus $campus): bool{
