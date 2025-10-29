@@ -123,22 +123,50 @@ final class ParticipantController extends AbstractController
         ]);
     }
 
+    #[Route('/sortie/{id}/quit', name: 'sortie_quit', methods: ['GET'])]
     #[Route('/sortie/{id}/register', name: 'sortie_register', methods: ['GET'])]
     public function sortie_register(Sortie $sortie, EntityManagerInterface $entityManager, EtatRepository $etatRepository): Response
     {
         $user = $this->getUser() ?? new Participant();
-
-        if(!$sortie->isRegistred($user) and $sortie->getStateNb() === EtatEnum::OUVERTE->value){
-            $sortie->addParticipant($user, $etatRepository);
+        $now = new \DateTime();
+        if(!$sortie->isRegistred($user)
+            and $sortie->getStateNb() === EtatEnum::OUVERTE->value
+            and $sortie->getParticipants()->count() < $sortie->getMaxRegistrationNumber()) // reste des places
+            {
+                $sortie->addParticipant($user);
+                if($sortie->getParticipants()->count() === $sortie->getMaxRegistrationNumber() ){
+                    $sortie->setState($sortie->findEtatbyEnum(EtatEnum::CLOTUREE->value , $etatRepository));
+                }
           try{
               $entityManager->persist($sortie);
+              $entityManager->persist($user);
               $entityManager->flush();
-              //$this->addFlash('succes', "La sortie ".$sortie->getName()." a été publiée.");
+              $this->addFlash('success', "Votre inscription à la sortie ".$sortie->getName()." est enregistrée.");
             }catch (\Exception $e){
-                $this->addFlash('warning', "Une erreur est survenu lors de l'inscription, veuillez contacter l'administrateur");
+                $this->addFlash('warning', "Une erreur est survenue lors de l'inscription, veuillez contacter l'administration");
+            }
+        }
+        elseif($sortie->isRegistred($user)
+            and $now < $sortie->getStartingDate())
+        {
+            $sortie->removeParticipant($user);
+            $user->removeSortie($sortie);
+            if($sortie->getState()->getNb() === EtatEnum::CLOTUREE->value
+               and $now < $sortie->getRegisterLimitDate() ){
+                $sortie->setState($sortie->findEtatbyEnum(EtatEnum::OUVERTE->value , $etatRepository));
+            }
+            try{
+                $entityManager->persist($sortie);
+                $entityManager->persist($user);
+                $entityManager->flush();
+                $this->addFlash('success', "Votre désistement de la sortie ".$sortie->getName()." est enregistré.");
+            }catch (\Exception $e){
+                $this->addFlash('warning', "Une erreur est survenue lors de l'inscription, veuillez contacter l'administration.");
             }
         }
 
         return $this->redirectToRoute('sortie_index');
     }
+
+
 }

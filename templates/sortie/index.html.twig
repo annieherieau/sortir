@@ -114,7 +114,7 @@
 
                         {#                SE DESISTER #}
                         {% if isRegistred  and (s.state.nb == 1 or s.state.nb == 2) %}
-                            <a href="#" title="Se désister">Se désister</a>
+                            <a href="{{ path('participant_sortie_quit', {'id': s.id}) }}" title="Se désister">Se désister</a>
                         {% endif %}
                         {#                S'INSCRIRE' #}
                         {% if not isRegistred  and s.state.nb == 1
