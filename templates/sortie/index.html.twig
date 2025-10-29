@@ -122,16 +122,16 @@
                             <a href="{{ path('participant_sortie_register',{'id': s.id}) }}"  title="S'inscrire">S'inscrire</a>
                         {% endif %}
 
-                        {#                PUBLIER/SUPPRIMER #}
-                        {% if s.state.nb == 0 %}
+                        {#                MODIFIER/PUBLIER/SUPPRIMER #}
+                        {% if s.draft %}
                             <a href="{{ path('sortie_edit',{'id': s.id}) }}" title="Modifier">Modifier</a>
                             <a href="{{ path('sortie_publish',{'id': s.id}) }}" title="Publier">Publier</a>
                             <a href="{{ path('sortie_delete', {'id' : s.id, 'token' : csrf_token('delete-'~s.id)})}}" title="Supprimer">Supprimer</a>
                         {% endif %}
 
                         {#                ANNULER #}
-                        {% if (s.state.nb > 0 and s.state.nb < 3) and ( is_granted('ROLE_ADMIN') or isTheOwner ) %}
-                            <a href="#" title="Annuler la sortie">Annuler</a>
+                        {% if (s.cancellable) and ( is_granted('ROLE_ADMIN') or isTheOwner ) %}
+                            <a href="{{ path('sortie_cancel', {'id' : s.id })}}"  title="Annuler la sortie">Annuler</a>
                         {% endif %}
                     </td>
                 </tr>
