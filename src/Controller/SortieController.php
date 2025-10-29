@@ -14,6 +14,7 @@ use App\Repository\CampusRepository;
 use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
 use App\Utils\SortiesFilter;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,15 +42,28 @@ final class SortieController extends AbstractController
     }
 
     #[Route('', name: 'index', methods: ['POST'])]
-    public function index(Request $request, SortieRepository $sortieRepository): Response
+    public function index(Request $request,SortieRepository $sortieRepository, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
-
         $campus = $user->getCampus();
+
+        foreach ($this->sortiesList as $sortie) {
+            if($this->updateState($sortie)){
+                try {
+                   $em->persist($sortie);
+                   $em->flush();
+                } catch (\Exception $e) {
+                    $this->addFlash('error', $e->getMessage());
+                }
+            }
+        }
+
+
         $sortiesList = $this->sortiesList;
+
         $filters = new SortiesFilter();
         $filters->setCampus($campus);
 
@@ -258,5 +272,33 @@ final class SortieController extends AbstractController
             "sortie" => $sortie,
             'cancelForm' => $cancelForm->createView(),
         ]);
+    }
+    private function updateState(Sortie $sortie): bool{
+      $now = new \DateTime();
+      $startingDate = $sortie->getStartingDate();
+      $endingDate = $sortie->getEndingDate();
+      $limitDate = $sortie->getRegisterLimitDate();
+      $archiveDelay = 30; // en jours depuis la date de début de la sortie
+
+       if($startingDate->diff($now)->format('%r%a') >= $archiveDelay){
+           $sortie->setState($this->etats[EtatEnum::HISTORISEE->value]);
+           return true;
+       }
+      if( $sortie->getState()->getNb() === etatEnum::OUVERTE->value
+          && $now >= $limitDate){
+          $sortie->setState($this->etats[EtatEnum::CLOTUREE->value]);
+          return true;
+      }
+      if( $sortie->getState()->getNb() === etatEnum::CLOTUREE->value
+          && $now >= $startingDate){
+          $sortie->setState($this->etats[EtatEnum::ENCOURS->value]);
+          return true;
+      }
+      if($sortie->getState()->getNb() === etatEnum::ENCOURS->value
+          && $now >= $endingDate){
+          $sortie->setState($this->etats[EtatEnum::TERMINEE->value]);
+          return true;
+      }
+      return false;
     }
 }
