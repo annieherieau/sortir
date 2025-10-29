@@ -4,7 +4,7 @@
 
 {% block main %}
     {% if app.user %}
-        <div class="card w-25 card-body flex float-end">
+        <div class="card w-25 card-body flex float-end" style="min-width:20em">
             <div><strong>Date du jour :</strong> {{ 'now' | date('d/m/Y') }}<br>
                 <strong>Participant :</strong> {{ app.user.pseudo }}<br>
                 <strong>Campus :</strong> {{ app.user.campus.name }}
@@ -12,37 +12,35 @@
         </div>
     {% endif %}
 
-    <div class="w-100 flex float-start">
+    <div class="w-100 flex float-start" style="min-width:60em;">
 
         <div class="flex-row">
             <h2>Filtrer les sorties</h2>
             {{ form_start(sortieFiltersForm) }}
-            <div class="d-flex justify-content-start align-items-center pb-2">
+            <div class="d-flex justify-content-center align-items-center pb-2">
                 <div class="w-50">
-                    <div class="d-flex w-100 flex-row pb-2 align-items-center justify-content-start">
+                    <div class="d-flex w-100 flex-row mb-2 align-items-center justify-content-star gap-3">
                         <label for="sortie_filter_campus" class="w-auto h-auto p-1">
                             Campus
                         </label>
-                        {{ form_widget(sortieFiltersForm.campus) }}
+                        {{ form_widget(sortieFiltersForm.campus, {'attr' : {'class' : 'w-auto'} }) }}
                     </div>
 
 
-                    <div class="d-flex w-100 flex-row pb-2 align-items-center justify-content-start">
-                         <label for="sortie_filter_sortieName" class="w-auto h-auto p-1">
-                             Nom partiel ou complet de la sortie
-                         </label>
-                        <span class="w-auto h-auto">
-                            {{ form_widget(sortieFiltersForm.sortieName) }}
-                        </span>
+                    <div class="d-flex w-100 flex-row mb-2 align-items-center justify-content-star">
+                        <label for="sortie_filter_campus" class="w-75 h-auto p-1">
+                            Nom partiel ou complet de la sortie
+                        </label>
+                        {{ form_widget(sortieFiltersForm.sortieName) }}
                     </div>
 
-                    <div class="d-flex flex-row ">
-                        <div class="d-flex w-auto me-3 align-items-center">
-                            {{ form_label(sortieFiltersForm.minStartDate) }}
+                    <div class="d-flex w-100 flex-row mb-2 align-items-center justify-content-star gap-5">
+                        <div class="d-flex w-auto gap-3">
+                            {{ form_label(sortieFiltersForm.minStartDate, null, {'label_attr' : {'class' : 'mt-2'}}) }}
                             {{ form_widget(sortieFiltersForm.minStartDate) }}
                         </div>
-                        <div class="d-flex w-auto me-3 align-items-center">
-                            {{ form_label(sortieFiltersForm.maxStartDate) }}
+                        <div class="d-flex w-auto gap-3">
+                            {{ form_label(sortieFiltersForm.maxStartDate, null, {'label_attr' : {'class' : 'mt-2'}}) }}
                             {{ form_widget(sortieFiltersForm.maxStartDate) }}
                         </div>
                     </div>
@@ -65,12 +63,17 @@
                         {{ form_label(sortieFiltersForm.isFinishedSortie) }}
                     </span>
                 </div>
-                <button class='btn btn-primary' type="submit"> Rechercher </button>
+                <div class="d-flex flex-column align-items-lg-center w-auto mx-3">
+                    <button class='btn btn-primary mb-3' type="submit"> Rechercher</button>
+                    <a href="{{ path('sortie_index') }}" class="btn btn-outline-primary w-100"
+                       title="Effacer le filtre">Effacer</a>
+                </div>
             </div>
 
             {{ form_end(sortieFiltersForm) }}
         </div>
     </div>
+
     <table class="table table-light table-bordered border-black">
         <thead class="">
         <tr class="table-dark">
@@ -105,7 +108,8 @@
                         {% if isTheOwner %}
                             {{ s.owner.pseudo }}
                         {% else %}
-                            <a href="{{ path('participant_profile', {'id':s.owner.id}) }}" title="Afficher le profil">{{ s.owner.pseudo }} </a>
+                            <a href="{{ path('participant_profile', {'id':s.owner.id}) }}"
+                               title="Afficher le profil">{{ s.owner.pseudo }} </a>
                         {% endif %}
                     </td>
                     <td>{{ s.campus.name }}</td>
@@ -114,24 +118,26 @@
 
                         {#                SE DESISTER #}
                         {% if isRegistred  and (s.state.nb == 1 or s.state.nb == 2) %}
-                            <a href="{{ path('participant_sortie_quit', {'id': s.id}) }}" title="Se désister">Se désister</a>
+                            <a href="{{ path('participant_sortie_quit', {'id': s.id}) }}" title="Se désister">Se
+                                désister</a>
                         {% endif %}
                         {#                S'INSCRIRE' #}
                         {% if not isRegistred  and s.state.nb == 1
                             and s.participants.count < s.maxRegistrationNumber %}
-                            <a href="{{ path('participant_sortie_register',{'id': s.id}) }}"  title="S'inscrire">S'inscrire</a>
+                            <a href="{{ path('participant_sortie_register',{'id': s.id}) }}" title="S'inscrire">S'inscrire</a>
                         {% endif %}
 
                         {#                MODIFIER/PUBLIER/SUPPRIMER #}
                         {% if s.draft %}
                             <a href="{{ path('sortie_edit',{'id': s.id}) }}" title="Modifier">Modifier</a>
                             <a href="{{ path('sortie_publish',{'id': s.id}) }}" title="Publier">Publier</a>
-                            <a href="{{ path('sortie_delete', {'id' : s.id, 'token' : csrf_token('delete-'~s.id)})}}" title="Supprimer">Supprimer</a>
+                            <a href="{{ path('sortie_delete', {'id' : s.id, 'token' : csrf_token('delete-'~s.id)}) }}"
+                               title="Supprimer">Supprimer</a>
                         {% endif %}
 
                         {#                ANNULER #}
                         {% if (s.cancellable) and ( is_granted('ROLE_ADMIN') or isTheOwner ) %}
-                            <a href="{{ path('sortie_cancel', {'id' : s.id })}}"  title="Annuler la sortie">Annuler</a>
+                            <a href="{{ path('sortie_cancel', {'id' : s.id }) }}" title="Annuler la sortie">Annuler</a>
                         {% endif %}
                     </td>
                 </tr>
@@ -140,6 +146,7 @@
         </tbody>
     </table>
 
-    <a class="btn btn-primary btn-lg" href="{{ path('sortie_create') }}" role="button" title="Créer une sortie">Créer une sortie</a>
+    <a class="btn btn-primary btn-lg" href="{{ path('sortie_create') }}" role="button" title="Créer une sortie">Créer
+        une sortie</a>
 
 {% endblock %}
