@@ -90,7 +90,9 @@
         {% for s in sorties %}
             {% set isRegistred = s.registred(app.user) %}
             {% set isTheOwner = s.isTheOwner(app.user) %}
-            {% set visible = isTheOwner or s.state.nb > 0 %}
+            {% set isOwnerCreation = isTheOwner and s.state.nb == 0 %}
+            {% set isActiveState = s.state.nb > 0 and s.state.nb < 6 %}
+            {% set visible = isOwnerCreation or isActiveState %}
 
             {% if visible %}
                 <tr>
