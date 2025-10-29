@@ -17,13 +17,15 @@
                     title="Accueil">
                     Accueil</a>
                 </li>
-                {% if app.user %}
+                {% if is_granted('ROLE_ADMIN') %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_logout') }}"
-                           title="Logout">
-                            Logout
+                        <a class="nav-link" href="#"
+                           title="Administration">
+                            Administration
                         </a>
                     </li>
+                {% endif %}
+                {% if app.user %}
                     <li class="nav-item">
                         <a class="nav-link {{ currentPath == 'sortie_create' ? 'active' : '' }}" href="{{ path('sortie_create') }}"
                            title="Créer une sortie">
@@ -36,6 +38,12 @@
                             Mon profil
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_logout') }}"
+                           title="Logout">
+                            Logout
+                        </a>
+                    </li>
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link {{ currentPath == 'app_login' ? 'active' : '' }}"  href="{{ path('app_login') }}"
@@ -44,14 +52,7 @@
                         </a>
                     </li>
                 {% endif %}
-                {% if is_granted('ROLE_ADMIN') %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"
-                           title="Administration">
-                            Administration
-                        </a>
-                    </li>
-                {% endif %}
+
             </ul>
         </div>
     </div>
