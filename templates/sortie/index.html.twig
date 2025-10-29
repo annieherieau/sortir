@@ -129,7 +129,7 @@
 
                         {#                ANNULER #}
                         {% if (s.cancellable) and ( is_granted('ROLE_ADMIN') or isTheOwner ) %}
-                            <a href="{{ path('sortie_cancel', {'id' : s.id, 'token' : csrf_token('cancel-'~s.id)})}}"  title="Annuler la sortie">Annuler</a>
+                            <a href="{{ path('sortie_cancel', {'id' : s.id })}}"  title="Annuler la sortie">Annuler</a>
                         {% endif %}
                     </td>
                 </tr>

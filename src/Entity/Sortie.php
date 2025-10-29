@@ -63,6 +63,7 @@ class Sortie
     private ?Etat $state = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
     private ?string $cancelMemo = null;
 
@@ -297,7 +298,8 @@ class Sortie
      */
     public function isCancellable(): bool
     {
-        return $this->getStateNb() === EtatEnum::OUVERTE->value || $this->getStateNb() === EtatEnum::CLOTUREE->value;
+        return ($this->getStateNb() === EtatEnum::OUVERTE->value || $this->getStateNb() === EtatEnum::CLOTUREE->value)
+            && $this->getStartingDate() > new \DateTimeImmutable();
     }
 
     /**
@@ -320,6 +322,5 @@ class Sortie
 
         return $this;
     }
-
 
 }
