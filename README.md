@@ -51,7 +51,7 @@ git clone git@github.com:{repo}/{project}.git
 
 2. Connecter la base de données
 
-```bash
+```
 # exemple fichier .env.local
 DATABASE_URL=mysql://root:@127.0.0.1:3306/projectName?server-version=10.4.28-MariaDB&charset=utf8mb4
 ```
@@ -78,5 +78,20 @@ symfony serve -d
 symfony server:stop
 ```
 ## Configuration
-Fichier assets/controllers.json
-- ux/turbo turbo-core : enable à false
+- Fichier assets/controllers.json
+```json
+{
+    "controllers": {
+        "@symfony/ux-turbo": {
+            "turbo-core": {
+                "enabled": false     
+```
+
+- Fichier config/packages/security.yaml
+```yaml
+securyty:
+  firewalls:
+    main:
+      user_checker: App\Security\UserChecker
+```
+
