@@ -225,7 +225,6 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
         $hours = \DateInterval::createFromDateString(random_int(0, 23).' hours');
         // $days = \DateInterval::createFromDateString(random_int(0, 4).' days');
         $endingDate = $startingDate
-            //->add( $days )
             ->add( $hours )->add( $minutes );
         $sortie->setEndingDate($endingDate);
 

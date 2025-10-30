@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
+{% block title %}details du profil{% endblock %}
 
 {% block main %}
+
+    <h2 class="align-self-center text-center mt-5"> Profil de {{ participant.pseudo }}</h2>
     <div class="d-flex flex-row justify-content-center align-items-center  mt-5">
         <div class="me-5">
             <img class="" src="{{ asset('img/user-placeholder.jpg') }}" alt="logo" height="100">

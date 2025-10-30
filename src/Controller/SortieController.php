@@ -14,7 +14,6 @@ use App\Repository\CampusRepository;
 use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
 use App\Utils\SortiesFilter;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,7 +41,7 @@ final class SortieController extends AbstractController
     }
 
     #[Route('', name: 'index', methods: ['POST'])]
-    public function index(Request $request,SortieRepository $sortieRepository, EntityManagerInterface $em): Response
+    public function index(Request $request, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
         if (!$user) {
