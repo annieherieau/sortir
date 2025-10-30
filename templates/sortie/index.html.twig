@@ -64,8 +64,8 @@
                     </span>
                 </div>
                 <div class="d-flex flex-column align-items-lg-center w-auto mx-3">
-                    <button class='btn btn-primary mb-3' type="submit"> Rechercher</button>
-                    <a href="{{ path('sortie_index') }}" class="btn btn-outline-primary w-100"
+                    <button class='btn btn-dark mb-3' type="submit"> Rechercher</button>
+                    <a href="{{ path('sortie_index') }}" class="btn btn-outline-dark w-100"
                        title="Effacer le filtre">Effacer</a>
                 </div>
             </div>
@@ -76,7 +76,7 @@
 
     <table class="table table-light table-bordered border-black">
         <thead class="">
-        <tr class="table-dark">
+        <tr class="table-dark table-sortir">
 
             <th>Nom de la sortie</th>
             <th>Date de la sortie</th>
@@ -148,7 +148,7 @@
         </tbody>
     </table>
 
-    <a class="btn btn-primary btn-lg" href="{{ path('sortie_create') }}" role="button" title="Créer une sortie">Créer
+    <a class="btn btn-dark btn-lg" href="{{ path('sortie_create') }}" role="button" title="Créer une sortie">Créer
         une sortie</a>
 
 {% endblock %}

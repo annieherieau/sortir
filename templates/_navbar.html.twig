@@ -2,12 +2,12 @@
 {% set currentPath = app.request.attributes.get('_route') %}
 
 {# les Administrateurs ont une navbar différente #}
-<nav class="navbar navbar-expand-lg {{ is_granted('ROLE_ADMIN') ? 'bg-danger' : 'bg-primary'}}" data-bs-theme="dark">
+<nav class="navbar navbar-expand-lg {{ is_granted('ROLE_ADMIN') ? 'bg-sortir-adm' : 'bg-sortir'}}" data-bs-theme="dark">
     <div class="container">
         <div class="logo_container h2">
             <a class="navbar-brand" href="{{ url('sortie_index') }}">
-                <img class="mr-3" src="{{ asset('img/user-placeholder.jpg') }}" alt="logo" height="50">
-                Sortir !</a>
+                <img class="mr-3 mt-2" src="{{ asset('img/Sortir logo trasnp.png') }}" alt="logo" height="100">
+                </a>
         </div>
 
         <div>
