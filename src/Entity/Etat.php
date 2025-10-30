@@ -71,7 +71,6 @@ class Etat
     public function removeSortie(Sortie $sortie): static
     {
         if ($this->sorties->removeElement($sortie)) {
-            // set the owning side to null (unless already changed)
             if ($sortie->getState() === $this) {
                 $sortie->setState(null);
             }

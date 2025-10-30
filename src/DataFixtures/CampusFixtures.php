@@ -11,7 +11,7 @@ class CampusFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $array =['Nord', 'Sud', 'Est', 'Ouest', 'Centre'];
-//        $faker = \Faker\Factory::create('fr_FR');
+
         foreach($array as $value){
             $campus = new Campus();
             $campus->setName($value);
