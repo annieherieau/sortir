@@ -10,10 +10,11 @@ class CampusFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $faker = \Faker\Factory::create('fr_FR');
-        for ($i = 0; $i < 5; $i++) {
+        $array =['Nord', 'Sud', 'Est', 'Ouest', 'Centre'];
+//        $faker = \Faker\Factory::create('fr_FR');
+        foreach($array as $value){
             $campus = new Campus();
-            $campus->setName("Campus: ".$faker->colorName());
+            $campus->setName($value);
             $manager->persist($campus);
         }
         $manager->flush();
