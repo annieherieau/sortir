@@ -63,7 +63,6 @@ class Sortie
     private ?Etat $state = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
     private ?string $cancelMemo = null;
 
