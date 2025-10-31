@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    details de la sortie
+{% endblock %}
+
+{% block main %}
+    <h2 class="align-self-center text-center mt-5">Détail de la sortie</h2>
+    <div class="d-flex flex-row justify-content-evenly my-5">
+        <div class="d-flex flex-column">
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Nom de la sortie: </strong> </span>
+                <span> {{ sortie.name }} </span>
+            </p>
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Date et heure de la sortie: </strong> </span>
+                <span> {{ sortie.startingDate | date('d/m/Y H:i') }} </span>
+            </p>
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Date limite d'inscription: </strong> </span>
+                <span> {{ sortie.registerLimitDate | date('d/m/Y H:i') }} </span>
+            </p>
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Nombre d'inscrits: </strong> </span>
+                <span> {{ sortie.participants.count }}/{{ sortie.maxRegistrationNumber }} </span>
+            </p>
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Durée en minutes: </strong> </span>
+                <span> {{ 24*60 * sortie.duration | date('%d') + 60 * sortie.duration | date('%h') + sortie.duration | date('%i') }} </span>
+            </p>
+        </div>
+        <div class="d-flex flex-column">
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Campus: </strong> </span>
+                <span> {{ sortie.campus.name }} </span>
+            </p>
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Ville: </strong> </span>
+                <span> {{ sortie.lieu.ville.name }} </span>
+            </p>
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Lieu: </strong> </span>
+                <span> {{ sortie.lieu.name }} </span>
+            </p>
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Rue: </strong> </span>
+                <span> {{ sortie.lieu.street }} </span>
+            </p>
+            <p class="d-inline-flex">
+                <span class=" pe-2"><strong> Code Postal: </strong> </span>
+                <span> {{ sortie.lieu.ville.postalCode }} </span>
+            </p>
+            {% if sortie.lieu.latitude and sortie.lieu.longitude %}
+                <p class="d-inline-flex">
+                    <span class=" pe-2"><strong> Latitude / Longitude: </strong> </span>
+                    <span>{{ sortie.lieu.coordToString}}</span>
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mt-2">
+        <p>
+            <span class=" pe-2"><strong> Etat: </strong> </span>
+            <span> {{ sortie.stateLibelle }} </span>
+        </p>
+        {% if sortie.stateNb == 5 %}
+            <p>
+                <span class=" pe-2"><strong> Motif d'annulation : </strong> </span>
+                <span>{{ sortie.cancelMemo }}</span>
+            </p>
+        {% endif %}
+    </div>
+
+    <div class="mt-2">
+        <p>
+            <span class=" pe-2"><strong> Description: </strong> </span>
+            <span> {{ sortie.description }} </span>
+        </p>
+    </div>
+    <div class="my-2">
+        <table class="table table-light table-bordered border-black">
+            <thead class="table-dark table-sortir">
+                <tr>
+                    <th>Pseudo</th>
+                    <th>Nom</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in sortie.participants %}
+                    <tr>
+                        <td><a href= "{{ path('participant_profile', {'id':p.id}) }}" title="Afficher le profil">{{ p.pseudo }}</a></td>
+                        <td> {{ p.name }} {{ p.firstName }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}
+

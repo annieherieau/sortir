@@ -9,3 +9,4 @@ import './bootstrap.js';
   import 'bootstrap/dist/css/bootstrap.min.css';  // Déclaration du CSS de Bootstrap
   import './styles/app.css';
   console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+

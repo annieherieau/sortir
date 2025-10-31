@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
+use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
@@ -17,25 +19,26 @@ class Sortie
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $name = null;
 
     #[ORM\Column]
-    private ?\DateTime $startingDate = null;
-
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
-    private ?\DateTime $duration = null;
+    private ?\DateTimeImmutable $startingDate = null;
 
     #[ORM\Column]
-    private ?\DateTime $registerLimitDate = null;
+    private ?\DateTimeImmutable $endingDate = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $registerLimitDate = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Assert\GreaterThan(0)]
     private ?int $maxRegistrationNumber = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $description = null;
-
-    #[ORM\Column(length: 50)]
-    private ?string $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
@@ -59,6 +62,12 @@ class Sortie
     #[ORM\JoinColumn(nullable: false)]
     private ?Etat $state = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
+    private ?string $cancelMemo = null;
+
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -81,36 +90,36 @@ class Sortie
         return $this;
     }
 
-    public function getStartingDate(): ?\DateTime
+    public function getStartingDate(): ?\DateTimeImmutable
     {
         return $this->startingDate;
     }
 
-    public function setStartingDate(\DateTime $startingDate): static
+    public function setStartingDate(\DateTimeImmutable $startingDate): static
     {
         $this->startingDate = $startingDate;
 
         return $this;
     }
 
-    public function getDuration(): ?\DateTime
+    public function getEndingDate(): ?\DateTimeImmutable
     {
-        return $this->duration;
+        return $this->endingDate;
     }
 
-    public function setDuration(\DateTime $duration): static
+    public function setEndingDate(\DateTimeImmutable $endingDate): static
     {
-        $this->duration = $duration;
+        $this->endingDate = $endingDate;
 
         return $this;
     }
 
-    public function getRegisterLimitDate(): ?\DateTime
+    public function getRegisterLimitDate(): ?\DateTimeImmutable
     {
         return $this->registerLimitDate;
     }
 
-    public function setRegisterLimitDate(\DateTime $registerLimitDate): static
+    public function setRegisterLimitDate(\DateTimeImmutable $registerLimitDate): static
     {
         $this->registerLimitDate = $registerLimitDate;
 
@@ -137,18 +146,6 @@ class Sortie
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): static
-    {
-        $this->status = $status;
 
         return $this;
     }
@@ -197,19 +194,17 @@ class Sortie
         return $this->participants;
     }
 
+    // TODO basculer les vérifications dans un SortieManager, car ce n'est pas compatible avec les fixtures
     public function addParticipant(Participant $participant): static
     {
-        if (!$this->participants->contains($participant)) {
-            $this->participants->add($participant);
-        }
-
+        $this->participants->add($participant);
+        $participant->addSortie($this);
         return $this;
     }
 
     public function removeParticipant(Participant $participant): static
     {
         $this->participants->removeElement($participant);
-
         return $this;
     }
 
@@ -224,4 +219,101 @@ class Sortie
 
         return $this;
     }
+
+    /**
+     * Renvoie la durée de la sortie par défault en DateInterval, ou en jours, heures, minutes si précisé
+     * @param string $str
+     * @return mixed
+     */
+    public function getDuration(string $str = 'interval'): mixed
+    {
+        $duration = $this->startingDate->diff($this->endingDate);
+        $array = ['interval'=>$duration, 'd'=>$duration->days, 'h' => $duration->h, 'i' => $duration->i];
+        return $array[$str];
+    }
+
+    /**
+     * Permet de vérifier si un participant est l'organisateur de la sortie
+     * @param Participant|null $participant
+     * @return bool
+     */
+    public function isTheOwner(?Participant $participant): bool
+    {
+        return $this->owner === $participant;
+    }
+
+    /**
+     * Permet de vérifier si un participant est inscrit à la sortie
+     * @param Participant|null $participant
+     * @return bool
+     */
+    public function isRegistred(?Participant $participant): bool
+    {
+        return $this->participants->contains($participant);
+    }
+
+    public function getStateNb(): ?int
+    {
+        return $this->getState()->getNb();
+    }
+
+    public function getStateLibelle(): ?string
+    {
+        return $this->getState()->getLibelle();
+    }
+
+
+    /**
+     * Permet de charger l'état désiré via le numero.
+     * @param int $etatNb // EtatEnum::ETATNAME->value
+     * @param EtatRepository $etatRepository
+     * @return Etat|null
+     */
+    public function findEtatbyEnum(int $etatNb, EtatRepository $etatRepository): ?Etat
+    {
+        return $etatRepository->findOneBy(['nb' => $etatNb]);
+    }
+
+    /**
+     * Permet de calculer la dateHeure de fin en ajoutant la durée en minute
+     * @param int $minutes
+     * @return $this
+     */
+    public function setEndingDateWithDurationInMunutes(int $minutes): static
+    {
+        $this->endingDate = $this->startingDate->modify('+'.$minutes.' minutes');
+        return $this;
+    }
+
+    /**
+     * Renvoie si la sortie peut être annulée
+     * @return bool
+     */
+    public function isCancellable(): bool
+    {
+        return ($this->getStateNb() === EtatEnum::OUVERTE->value || $this->getStateNb() === EtatEnum::CLOTUREE->value)
+            && $this->getStartingDate() > new \DateTimeImmutable();
+    }
+
+    /**
+     * Renvoie si la sortie est en création (brouillon)
+     * @return bool
+     */
+    public function isDraft(): bool
+    {
+        return $this->getStateNb() === EtatEnum::ENCREATION->value;
+    }
+
+    public function getCancelMemo(): ?string
+    {
+        return $this->cancelMemo;
+    }
+
+    public function setCancelMemo(?string $cancelMemo): static
+    {
+        $this->cancelMemo = $cancelMemo;
+
+        return $this;
+    }
+
 }

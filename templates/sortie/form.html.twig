@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ titre }}
+{% endblock %}
+
+{% block main %}
+    <h2>{{ titre }}</h2>
+    {{ form_start(sortieForm, {'attr' : {'class' : 'standard'}}) }}
+    <fieldset class="border p-3 mb-3 row">
+        <div class="col-6">
+            <div class="mt-3">
+                {{ form_label(sortieForm.name) }}
+                {{ form_widget(sortieForm.name) }}
+                {{ form_errors(sortieForm.name) }}
+            </div>
+            <div class="mt-3">
+                {{ form_label(sortieForm.startingDate) }}
+                {{ form_widget(sortieForm.startingDate) }}
+                {{ form_errors(sortieForm.startingDate) }}
+            </div>
+            <div class="mt-3">
+                {{ form_label(sortieForm.registerLimitDate) }}
+                {{ form_widget(sortieForm.registerLimitDate) }}
+                {{ form_errors(sortieForm.registerLimitDate) }}
+            </div>
+            <div class="mt-3">
+                {{ form_label(sortieForm.durationInMunites) }}
+                {{ form_widget(sortieForm.durationInMunites) }}
+                {{ form_errors(sortieForm.durationInMunites) }}
+            </div>
+            <div class="mt-3">
+                {{ form_label(sortieForm.maxRegistrationNumber) }}
+                {{ form_widget(sortieForm.maxRegistrationNumber) }}
+                {{ form_errors(sortieForm.maxRegistrationNumber) }}
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="mt-3">
+                {{ form_label(sortieForm.campus) }}
+                {{ form_widget(sortieForm.campus) }}
+                {{ form_errors(sortieForm.campus) }}
+            </div>
+            <div class="mt-3">
+                {{ form_label(sortieForm.lieu) }}
+                {{ form_widget(sortieForm.lieu) }}
+                {{ form_errors(sortieForm.lieu) }}
+            </div>
+
+            <div class="mt-3">
+                <label for="street" class="form-label">Rue</label>
+                <input type="text" name="street" id="street" class="form-control-plaintext"
+                       value="{{ sortie.lieu ? sortie.lieu.street : '' }}" disabled/>
+            </div>
+            <div class="mt-3">
+                <label for="codeAndVille" class="form-label">Code postal - VILLE</label>
+                <input type="text" name="codeAndVille" id="codeAndVille" class="form-control-plaintext"
+                       value="{{ sortie.lieu ? sortie.lieu.codeAndVille: '' }}" disabled/>
+            </div>
+            <div class="mt-3">
+                <label for="coordToString" class="form-label">Latitude / Longitude</label>
+                <input type="text" name="coordToString" id="coordToString" class="form-control-plaintext"
+                       value="{{ sortie.lieu ? sortie.lieu.getCoordToString : ''}}" disabled/>
+            </div>
+
+        </div>
+        <div class="mt-3">
+            {{ form_label(sortieForm.description) }}
+            {{ form_widget(sortieForm.description) }}
+            {{ form_errors(sortieForm.description) }}
+            {#            Champs cachés #}
+            {{ form_widget(sortieForm.owner) }}
+            {{ form_widget(sortieForm.state) }}
+            {{ form_widget(sortieForm.publier) }}
+        </div>
+
+        <div class="mt-3">
+            <input type="submit" class="btn btn-dark" value="Enregistrer" id="submit-enregistrer">
+            <input type="submit" class="btn btn-dark" value="Publier" id="submit-publier" onclick="publish(event)">
+            {% if sortie.id != 0 %}
+                <a class="btn btn-danger"
+                   href="{{ path('sortie_delete', {'id' : sortie.id, 'token' : csrf_token('delete-'~sortie.id)}) }}">Supprimer</a>
+            {% endif %}
+            <a class="btn btn-outline-dark" href="{{ path('sortie_index') }}">Retour à la liste</a>
+        </div>
+    </fieldset>
+    {{ form_end(sortieForm) }}
+
+
+    <script src="{{ asset('js/sortie-form.js') }}" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+        // Evenement sur le select Lieu
+        // affichage des détails du lieu
+        let lieux = {{ lieux | json_encode |raw }};
+        let sortie_lieu = document.getElementById('sortie_lieu');
+        sortie_lieu.addEventListener("change", function(){
+            handleLieuInfos(lieux)
+        });
+
+        // Evenement sur la date de début de la sortie
+        // date début = max de la date limit d'inscription
+        let startingDateElement = document.getElementById('sortie_startingDate');
+        setMaxLimitDate(startingDateElement);
+        startingDateElement.addEventListener("change", function() {
+            setMaxLimitDate(startingDateElement)
+        });
+    </script>
+{% endblock %}
+

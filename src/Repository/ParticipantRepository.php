@@ -33,6 +33,14 @@ class ParticipantRepository extends ServiceEntityRepository implements PasswordU
         $this->getEntityManager()->flush();
     }
 
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder("p")
+            ->where("p.active = true")
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Participant[] Returns an array of Participant objects
     //     */

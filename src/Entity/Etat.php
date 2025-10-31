@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\EtatRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EtatRepository::class)]
@@ -23,6 +24,9 @@ class Etat
      */
     #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'state')]
     private Collection $sorties;
+
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $nb = null;
 
     public function __construct()
     {
@@ -54,24 +58,35 @@ class Etat
         return $this->sorties;
     }
 
-    public function addSorty(Sortie $sorty): static
+    public function addSortie(Sortie $sortie): static
     {
-        if (!$this->sorties->contains($sorty)) {
-            $this->sorties->add($sorty);
-            $sorty->setState($this);
+        if (!$this->sorties->contains($sortie)) {
+            $this->sorties->add($sortie);
+            $sortie->setState($this);
         }
 
         return $this;
     }
 
-    public function removeSorty(Sortie $sorty): static
+    public function removeSortie(Sortie $sortie): static
     {
-        if ($this->sorties->removeElement($sorty)) {
-            // set the owning side to null (unless already changed)
-            if ($sorty->getState() === $this) {
-                $sorty->setState(null);
+        if ($this->sorties->removeElement($sortie)) {
+            if ($sortie->getState() === $this) {
+                $sortie->setState(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNb(): ?int
+    {
+        return $this->nb;
+    }
+
+    public function setNb(int $nb): static
+    {
+        $this->nb = $nb;
 
         return $this;
     }

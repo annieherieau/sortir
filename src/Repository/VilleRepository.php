@@ -16,6 +16,13 @@ class VilleRepository extends ServiceEntityRepository
         parent::__construct($registry, Ville::class);
     }
 
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder("v")
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Ville[] Returns an array of Ville objects
     //     */

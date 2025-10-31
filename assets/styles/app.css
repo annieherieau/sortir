@@ -11,3 +11,35 @@ body {
       background-color: #fff;
       height: 2em;
   }
+
+.bg-sortir{
+    background-color: #01687a;
+}
+
+.bg-sortir-adm{
+    background-color: darkred;
+}
+
+.table-sortir{
+    --bs-table-bg : #01687a;
+}
+
+.nav-link{
+    font-size: larger;
+    font-weight: bold;
+}
+.required:after {
+    color:  red;
+    content: " *";
+    position: relative;
+}
+
+.required-before:before {
+    color:  red;
+    content: "* ";
+    position: relative;
+}
+
+.standard label{
+    font-weight: bold;
+}
